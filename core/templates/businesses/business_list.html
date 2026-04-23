@@ -1,0 +1,109 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>کسب‌وکارها | لیست معرفی در شهر و حوزه فعالیت</title>
+  <meta name="description" content="لیست کسب‌وکارها و صفحات معرفی. می‌توانید بر اساس شهر و حوزه فعالیت جستجو و فیلتر کنید.">
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+  <style>
+    :root{--bg:#f7f7f7;--card:#fff;--text:#111;--muted:#666;--brand:#0b5fff}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text)}
+    .container{max-width:980px; margin:0 auto; padding:24px}
+    header{background:var(--card); border-radius:12px; padding:18px}
+    h1{margin:0 0 6px; font-size:20px}
+    .sub{color:var(--muted); margin:0}
+    .filters{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .field{background:#fff; border-radius:12px; padding:10px; border:1px solid #eee}
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input, select{
+      width:240px; max-width:80vw;
+      border:1px solid #eaeaea; border-radius:10px; padding:10px 10px;
+      outline:none; background:#fff; color:#111;
+    }
+    button{
+      background:var(--brand); color:#fff; border:none; border-radius:12px;
+      padding:10px 14px; font-weight:700; cursor:pointer;
+      height:46px;
+    }
+    .grid{display:grid; grid-template-columns: repeat(1, 1fr); gap:12px; margin-top:16px}
+    @media (min-width: 768px){
+      .grid{grid-template-columns: repeat(2, 1fr);}
+    }
+    .card{background:var(--card); border-radius:12px; padding:16px; border:1px solid #f1f1f1}
+    .title{font-weight:800; margin:0 0 6px}
+    .meta{color:var(--muted); margin:0; line-height:1.8; font-size:14px}
+    a.btn{
+      display:inline-block; margin-top:12px; background:var(--brand); color:#fff;
+      text-decoration:none; padding:10px 12px; border-radius:10px; font-weight:700;
+    }
+    footer{margin-top:18px; color:var(--muted); font-size:13px; text-align:center}
+    .empty{background:#fff;border:1px dashed #ddd;border-radius:12px;padding:16px;color:var(--muted)}
+    .pager{display:flex; gap:10px; justify-content:center; margin-top:18px}
+    .pager a{background:#fff;border:1px solid #eee;border-radius:10px;padding:8px 12px;text-decoration:none;color:var(--text)}
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <h1>لیست کسب‌وکارها</h1>
+      <p class="sub">می‌توانید بر اساس <strong>شهر</strong> و <strong>حوزه فعالیت</strong> فیلتر کنید.</p>
+
+      <form class="filters" method="get">
+        <div class="field">
+          <label>شهر</label>
+          <input type="text" name="city" value="{{ filter_city }}" placeholder="مثلاً تهران">
+        </div>
+
+        <div class="field">
+          <label>حوزه فعالیت</label>
+          <input type="text" name="activity" value="{{ filter_activity }}" placeholder="مثلاً تعمیرات موبایل">
+        </div>
+
+        <div class="field" style="display:flex; align-items:flex-end; padding:10px 12px; border:0;">
+          <button type="submit">اعمال فیلتر</button>
+        </div>
+      </form>
+    </header>
+
+    <section class="grid">
+      {% for b in businesses %}
+        <article class="card">
+          <h2 class="title">{{ b.name }}</h2>
+          <p class="meta">
+            <strong>حوزه فعالیت:</strong> {{ b.activity }}<br>
+            <strong>شهر:</strong> {{ b.city.name|default:b.city_name }}
+          </p>
+          <a class="btn" href="{% url 'business_detail' b.slug %}">مشاهده صفحه معرفی</a>
+        </article>
+      {% empty %}
+        <div class="empty">
+          نتیجه‌ای برای فیلترهای فعلی پیدا نشد. لطفاً مقادیر را تغییر دهید.
+        </div>
+      {% endfor %}
+    </section>
+
+    {% if is_paginated %}
+      <div class="pager">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}&city={{ filter_city }}&activity={{ filter_activity }}">قبلی</a>
+        {% endif %}
+
+        <span style="align-self:center;color:var(--muted);font-size:14px;">
+          صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}&city={{ filter_city }}&activity={{ filter_activity }}">بعدی</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <footer>© {{ now|default:"" }} لیست کسب‌وکارها</footer>
+  </main>
+</body>
+</html>
