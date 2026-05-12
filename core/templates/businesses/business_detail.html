@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -7,6 +8,9 @@
   <title>
     {% if seo and seo.title %}{{ seo.title }}{% else %}معرفی | {{ business.name }} – {{ business.activity }} در {{ business.city.name|default:business.city_name }}{% endif %}
   </title>
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/logo/favicon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/logo/favicon.png' %}">
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/logo/favicon.png' %}">
 
   <meta name="description"
         content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:180 }}{% endif %}">

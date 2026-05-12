@@ -1,4 +1,5 @@
 # main modules
 Django>4.2,<4.3
-
+Pillow
 requests
+django-robots
