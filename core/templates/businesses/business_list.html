@@ -4,109 +4,377 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>کسب‌وکارها | لیست معرفی در شهر و حوزه فعالیت</title>
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/logo/favicon.png' %}">
-<link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/logo/favicon.png' %}">
-<link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/logo/favicon.png' %}">
-  <meta name="description" content="لیست کسب‌وکارها و صفحات معرفی. می‌توانید بر اساس شهر و حوزه فعالیت جستجو و فیلتر کنید.">
+  <title>لیست کسب‌وکارها | جستجو</title>
+  <link rel="icon" type="image/png" href="{% static 'img/logo/favicon.png' %}">
+  <meta name="description" content="لیست کامل کسب‌وکارهای ثبت‌شده در جستجو. جستجو بر اساس شهر و حوزه فعالیت.">
   <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
   <style>
-    :root{--bg:#f7f7f7;--card:#fff;--text:#111;--muted:#666;--brand:#0b5fff}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text)}
-    .container{max-width:980px; margin:0 auto; padding:24px}
-    header{background:var(--card); border-radius:12px; padding:18px}
-    h1{margin:0 0 6px; font-size:20px}
-    .sub{color:var(--muted); margin:0}
-    .filters{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
-    .field{background:#fff; border-radius:12px; padding:10px; border:1px solid #eee}
-    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
-    input, select{
-      width:240px; max-width:80vw;
-      border:1px solid #eaeaea; border-radius:10px; padding:10px 10px;
-      outline:none; background:#fff; color:#111;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:      #0B6FBF;
+      --brand-dark: #0957a0;
+      --brand-light:#e1f0ff;
+      --bg:         #f4f6f9;
+      --card:       #fff;
+      --text:       #111;
+      --muted:      #666;
+      --border:     #e8ecf0;
+      --radius:     12px;
+      --radius-lg:  16px;
     }
-    button{
-      background:var(--brand); color:#fff; border:none; border-radius:12px;
-      padding:10px 14px; font-weight:700; cursor:pointer;
-      height:46px;
+
+    body { font-family: 'Vazirmatn', system-ui, Arial; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    .nav { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: var(--brand); }
+    .nav-logo-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-links a { font-size: 14px; color: var(--muted); transition: color .15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--brand); font-weight: 500; }
+
+    /* BTN */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: var(--radius); font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: background .15s; }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-primary:hover { background: var(--brand-dark); }
+    .btn-outline { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+    .btn-outline:hover { background: var(--brand-light); }
+
+    /* PAGE HEADER */
+    .page-header {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
     }
-    .grid{display:grid; grid-template-columns: repeat(1, 1fr); gap:12px; margin-top:16px}
-    @media (min-width: 768px){
-      .grid{grid-template-columns: repeat(2, 1fr);}
+    .page-header-inner { max-width: 1080px; margin: 0 auto; }
+    .breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .breadcrumb a { color: var(--brand); }
+    .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .page-header p  { font-size: 14px; color: var(--muted); }
+
+    /* FILTER BAR */
+    .filter-bar {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
     }
-    .card{background:var(--card); border-radius:12px; padding:16px; border:1px solid #f1f1f1}
-    .title{font-weight:800; margin:0 0 6px}
-    .meta{color:var(--muted); margin:0; line-height:1.8; font-size:14px}
-    a.btn{
-      display:inline-block; margin-top:12px; background:var(--brand); color:#fff;
-      text-decoration:none; padding:10px 12px; border-radius:10px; font-weight:700;
+    .filter-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
     }
-    footer{margin-top:18px; color:var(--muted); font-size:13px; text-align:center}
-    .empty{background:#fff;border:1px dashed #ddd;border-radius:12px;padding:16px;color:var(--muted)}
-    .pager{display:flex; gap:10px; justify-content:center; margin-top:18px}
-    .pager a{background:#fff;border:1px solid #eee;border-radius:10px;padding:8px 12px;text-decoration:none;color:var(--text)}
+    .filter-field { display: flex; flex-direction: column; gap: 4px; }
+    .filter-field label { font-size: 12px; color: var(--muted); }
+    .filter-field input, .filter-field select {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 8px 12px; font-size: 14px; font-family: inherit;
+      color: var(--text); background: var(--bg); outline: none;
+      min-width: 160px; transition: border-color .15s;
+    }
+    .filter-field input:focus, .filter-field select:focus { border-color: var(--brand); background: #fff; }
+    .filter-actions { display: flex; gap: 8px; align-items: flex-end; }
+    .btn-reset {
+      background: transparent; color: var(--muted); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 9px 14px; font-size: 14px;
+      cursor: pointer; font-family: inherit; transition: border-color .15s;
+    }
+    .btn-reset:hover { border-color: var(--brand); color: var(--brand); }
+
+    /* ACTIVE FILTERS */
+    .active-filters {
+      max-width: 1080px; margin: 12px auto 0;
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .active-filters-label { font-size: 12px; color: var(--muted); }
+    .filter-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--brand-light); color: var(--brand);
+      font-size: 12px; padding: 4px 10px; border-radius: 20px;
+    }
+    .filter-tag a { color: var(--brand); font-size: 13px; line-height: 1; }
+
+    /* CONTAINER */
+    .container { max-width: 1080px; margin: 0 auto; padding: 28px 24px; }
+
+    /* RESULTS INFO */
+    .results-info {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+    }
+    .results-count { font-size: 14px; color: var(--muted); }
+    .results-count strong { color: var(--text); }
+
+    /* GRID */
+    .biz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px; margin-bottom: 32px;
+    }
+
+    /* CARD */
+    .biz-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 20px;
+      display: flex; flex-direction: column;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .biz-card:hover { border-color: var(--brand); box-shadow: 0 2px 14px rgba(11,111,191,.1); }
+    .biz-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+    .biz-logo { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
+    .biz-logo-placeholder {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: var(--brand-light); color: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .biz-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .biz-meta { font-size: 12px; color: var(--muted); line-height: 1.8; }
+    .biz-meta i { font-size: 12px; }
+    .biz-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.7; flex: 1;
+      margin-bottom: 14px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .biz-footer { display: flex; align-items: center; justify-content: space-between; }
+    .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .badge-blue  { background: var(--brand-light); color: var(--brand); }
+    .badge-green { background: #eaf3de; color: #3B6D11; }
+    .biz-link { font-size: 13px; color: var(--brand); font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .biz-link:hover { text-decoration: underline; }
+
+    /* EMPTY */
+    .empty {
+      background: var(--card); border: 1.5px dashed var(--border);
+      border-radius: var(--radius-lg); padding: 60px 24px;
+      text-align: center; color: var(--muted); grid-column: 1 / -1;
+    }
+    .empty i { font-size: 40px; display: block; margin-bottom: 12px; opacity: .35; }
+    .empty p { margin-bottom: 16px; }
+
+    /* PAGINATION */
+    .pager { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+    .pager a, .pager span {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 38px; height: 38px; padding: 0 12px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 14px;
+      color: var(--text); transition: border-color .15s;
+    }
+    .pager a:hover { border-color: var(--brand); color: var(--brand); }
+    .pager .current { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
+    .pager .disabled { opacity: .4; pointer-events: none; }
+
+    /* FOOTER */
+    footer { background: #0c2d52; color: #a8c8e8; padding: 28px 24px; margin-top: 40px; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
+    .footer-logo-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    footer p { font-size: 13px; color: #a8c8e8; }
+
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      .filter-field input, .filter-field select { min-width: 100%; }
+      .filter-inner { flex-direction: column; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
-
 <body>
-  <main class="container">
-    <header>
-      <h1>لیست کسب‌وکارها</h1>
-      <p class="sub">می‌توانید بر اساس <strong>شهر</strong> و <strong>حوزه فعالیت</strong> فیلتر کنید.</p>
 
-      <form class="filters" method="get">
-        <div class="field">
-          <label>شهر</label>
-          <input type="text" name="city" value="{{ filter_city }}" placeholder="مثلاً تهران">
-        </div>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="{% url 'home' %}">
+      <div class="nav-logo-icon"><i class="ti ti-search"></i></div>
+      جستجو
+    </a>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">صفحه اول</a>
+      <a href="{% url 'business_list' %}" class="active">همه کسب‌وکارها</a>
+      <a href="#">درباره ما</a>
+      <a class="btn btn-primary" href="#">ثبت کسب‌وکار</a>
+    </div>
+  </div>
+</nav>
 
-        <div class="field">
-          <label>حوزه فعالیت</label>
-          <input type="text" name="activity" value="{{ filter_activity }}" placeholder="مثلاً تعمیرات موبایل">
-        </div>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="{% url 'home' %}">خانه</a>
+      <i class="ti ti-chevron-left" style="font-size:13px"></i>
+      <span>لیست کسب‌وکارها</span>
+    </div>
+    <h1>لیست کسب‌وکارها</h1>
+    <p>جستجو بر اساس شهر و حوزه فعالیت</p>
+  </div>
+</div>
 
-        <div class="field" style="display:flex; align-items:flex-end; padding:10px 12px; border:0;">
-          <button type="submit">اعمال فیلتر</button>
-        </div>
-      </form>
-    </header>
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <form class="filter-inner" method="get">
+    <div class="filter-field">
+      <label for="f-city">شهر</label>
+      <input id="f-city" type="text" name="city" value="{{ filter_city }}" placeholder="مثلاً تهران">
+    </div>
+    <div class="filter-field">
+      <label for="f-activity">حوزه فعالیت</label>
+      <input id="f-activity" type="text" name="activity" value="{{ filter_activity }}" placeholder="مثلاً تعمیر موبایل">
+    </div>
+    <div class="filter-field">
+      <label for="f-category">دسته‌بندی</label>
+      <select id="f-category" name="category">
+        <option value="">همه دسته‌ها</option>
+        <option value="shop"    {% if filter_category == 'shop'    %}selected{% endif %}>مغازه</option>
+        <option value="company" {% if filter_category == 'company' %}selected{% endif %}>شرکت</option>
+        <option value="person"  {% if filter_category == 'person'  %}selected{% endif %}>شخص / فریلنسر</option>
+        <option value="service" {% if filter_category == 'service' %}selected{% endif %}>خدمات</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-primary" type="submit">
+        <i class="ti ti-search"></i> جستجو
+      </button>
+      {% if filter_city or filter_activity or filter_category %}
+        <a class="btn-reset" href="{% url 'business_list' %}">پاک کردن</a>
+      {% endif %}
+    </div>
+  </form>
 
-    <section class="grid">
-      {% for b in businesses %}
-        <article class="card">
-          <h2 class="title">{{ b.name }}</h2>
-          <p class="meta">
-            <strong>حوزه فعالیت:</strong> {{ b.activity }}<br>
-            <strong>شهر:</strong> {{ b.city.name|default:b.city_name }}
-          </p>
-          <a class="btn" href="{% url 'business_detail' b.slug %}">مشاهده صفحه معرفی</a>
-        </article>
-      {% empty %}
-        <div class="empty">
-          نتیجه‌ای برای فیلترهای فعلی پیدا نشد. لطفاً مقادیر را تغییر دهید.
-        </div>
-      {% endfor %}
-    </section>
+  {% if filter_city or filter_activity or filter_category %}
+  <div class="active-filters">
+    <span class="active-filters-label">فیلترهای فعال:</span>
+    {% if filter_city %}
+      <span class="filter-tag">
+        <i class="ti ti-map-pin" style="font-size:12px"></i> {{ filter_city }}
+      </span>
+    {% endif %}
+    {% if filter_activity %}
+      <span class="filter-tag">
+        <i class="ti ti-tag" style="font-size:12px"></i> {{ filter_activity }}
+      </span>
+    {% endif %}
+    {% if filter_category %}
+      <span class="filter-tag">
+        <i class="ti ti-category" style="font-size:12px"></i> {{ filter_category }}
+      </span>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
 
-    {% if is_paginated %}
-      <div class="pager">
-        {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}&city={{ filter_city }}&activity={{ filter_activity }}">قبلی</a>
+<!-- MAIN -->
+<div class="container">
+
+  <div class="results-info">
+    <span class="results-count">
+      <strong>{{ paginator.count }}</strong> کسب‌وکار یافت شد
+    </span>
+  </div>
+
+  <div class="biz-grid">
+    {% for b in businesses %}
+    <article class="biz-card">
+      <div class="biz-top">
+        {% if b.logo %}
+          <img class="biz-logo" src="{{ b.logo.url }}" alt="لوگو {{ b.name }}" loading="lazy">
+        {% else %}
+          <div class="biz-logo-placeholder">
+            {% if b.category == 'company' %}<i class="ti ti-briefcase"></i>
+            {% elif b.category == 'person'  %}<i class="ti ti-user"></i>
+            {% elif b.category == 'service' %}<i class="ti ti-tools"></i>
+            {% else %}<i class="ti ti-building-store"></i>{% endif %}
+          </div>
         {% endif %}
-
-        <span style="align-self:center;color:var(--muted);font-size:14px;">
-          صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}
-        </span>
-
-        {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}&city={{ filter_city }}&activity={{ filter_activity }}">بعدی</a>
-        {% endif %}
+        <div>
+          <div class="biz-name">{{ b.name }}</div>
+          <div class="biz-meta">
+            <i class="ti ti-map-pin"></i> {{ b.get_city_display_name }}
+            &nbsp;·&nbsp;
+            <i class="ti ti-tag"></i> {{ b.activity }}
+          </div>
+        </div>
       </div>
+
+      {% if b.short_description %}
+        <p class="biz-desc">{{ b.short_description }}</p>
+      {% endif %}
+
+      <div class="biz-footer">
+        {% if b.is_verified %}
+          <span class="badge badge-green"><i class="ti ti-circle-check" style="font-size:11px"></i> تایید شده</span>
+        {% else %}
+          <span class="badge badge-blue">{{ b.get_category_display }}</span>
+        {% endif %}
+        <a class="biz-link" href="{{ b.get_absolute_url }}">
+          مشاهده صفحه <i class="ti ti-arrow-left"></i>
+        </a>
+      </div>
+    </article>
+    {% empty %}
+    <div class="empty">
+      <i class="ti ti-mood-empty"></i>
+      <p>نتیجه‌ای برای فیلترهای انتخابی پیدا نشد.</p>
+      <a class="btn btn-outline" href="{% url 'business_list' %}">حذف فیلترها</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- PAGINATION -->
+  {% if is_paginated %}
+  <nav class="pager" aria-label="صفحه‌بندی">
+    {% if page_obj.has_previous %}
+      <a href="?page=1&city={{ filter_city }}&activity={{ filter_activity }}&category={{ filter_category }}">
+        <i class="ti ti-chevrons-right"></i>
+      </a>
+      <a href="?page={{ page_obj.previous_page_number }}&city={{ filter_city }}&activity={{ filter_activity }}&category={{ filter_category }}">
+        <i class="ti ti-chevron-right"></i>
+      </a>
+    {% else %}
+      <span class="disabled"><i class="ti ti-chevrons-right"></i></span>
+      <span class="disabled"><i class="ti ti-chevron-right"></i></span>
     {% endif %}
 
-    <footer>© {{ now|default:"" }} لیست کسب‌وکارها</footer>
-  </main>
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="current">{{ num }}</span>
+      {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+        <a href="?page={{ num }}&city={{ filter_city }}&activity={{ filter_activity }}&category={{ filter_category }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}&city={{ filter_city }}&activity={{ filter_activity }}&category={{ filter_category }}">
+        <i class="ti ti-chevron-left"></i>
+      </a>
+      <a href="?page={{ page_obj.paginator.num_pages }}&city={{ filter_city }}&activity={{ filter_activity }}&category={{ filter_category }}">
+        <i class="ti ti-chevrons-left"></i>
+      </a>
+    {% else %}
+      <span class="disabled"><i class="ti ti-chevron-left"></i></span>
+      <span class="disabled"><i class="ti ti-chevrons-left"></i></span>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a class="footer-logo" href="{% url 'home' %}">
+      <div class="footer-logo-icon"><i class="ti ti-search"></i></div>
+      جستجو
+    </a>
+    <p>© {% now "Y" %} جستجو — تمامی حقوق محفوظ است</p>
+  </div>
+</footer>
+
 </body>
 </html>

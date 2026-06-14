@@ -5,156 +5,413 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>
-    {% if seo and seo.title %}{{ seo.title }}{% else %}معرفی | {{ business.name }} – {{ business.activity }} در {{ business.city.name|default:business.city_name }}{% endif %}
-  </title>
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/logo/favicon.png' %}">
-<link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/logo/favicon.png' %}">
-<link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/logo/favicon.png' %}">
-
-  <meta name="description"
-        content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:180 }}{% endif %}">
-
+  <title>{% if seo and seo.title %}{{ seo.title }}{% else %}{{ business.name }} | {{ business.activity }} در {{ business.get_city_display_name }}{% endif %}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/logo/favicon.png' %}">
+  <meta name="description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:160 }}{% endif %}">
+  {% if seo and not seo.robots_index %}<meta name="robots" content="noindex">{% endif %}
   <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
-  <!-- Open Graph -->
-  <meta property="og:locale" content="fa_IR">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{% if seo and seo.title %}{{ seo.title }}{% else %}معرفی | {{ business.name }} – {{ business.activity }}{% endif %}">
-  <meta property="og:description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:180 }}{% endif %}">
-  <meta property="og:url" content="{{ request.build_absolute_uri }}">
-  {% if seo and seo.og_image %}
-    <meta property="og:image" content="{{ seo.og_image }}">
-  {% endif %}
+  <meta property="og:locale"      content="fa_IR">
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="{% if seo and seo.title %}{{ seo.title }}{% else %}{{ business.name }} | {{ business.activity }}{% endif %}">
+  <meta property="og:description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:160 }}{% endif %}">
+  <meta property="og:url"         content="{{ request.build_absolute_uri }}">
+  {% if seo and seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="{% if seo and seo.title %}{{ seo.title }}{% else %}{{ business.name }}{% endif %}">
+  <meta name="twitter:description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|truncatechars:160 }}{% endif %}">
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="{% if seo and seo.title %}{{ seo.title }}{% else %}معرفی | {{ business.name }} – {{ business.activity }}{% endif %}">
-  <meta name="twitter:description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:180 }}{% endif %}">
+  <!-- JSON-LD LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "{{ business.name }}",
+    "description": "{{ business.short_description|default:business.about_text|truncatechars:200 }}",
+    {% if business.phone %}"telephone": "{{ business.phone }}",{% endif %}
+    {% if business.email %}"email": "{{ business.email }}",{% endif %}
+    {% if business.website %}"url": "{{ business.website }}",{% endif %}
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "{{ business.get_city_display_name }}",
+      {% if address and address.state %}"addressRegion": "{{ address.state }}",{% endif %}
+      {% if address and address.postal_code %}"postalCode": "{{ address.postal_code }}",{% endif %}
+      "addressCountry": "IR"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
   <style>
-    :root{--bg:#f7f7f7;--card:#fff;--text:#111;--muted:#666;--brand:#0b5fff}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text)}
-    .container{max-width:980px; margin:0 auto; padding:24px}
-    header{background:var(--card); border-radius:12px; padding:18px; margin-bottom:16px}
-    h1{margin:0 0 6px; font-size:20px}
-    .sub{color:var(--muted); margin:0}
-    .grid{display:grid; grid-template-columns: 1fr; gap:12px}
-    .card{background:var(--card); border-radius:12px; padding:16px; border:1px solid #f1f1f1}
-    h2{font-size:16px; margin:0 0 10px}
-    ul{margin:0; padding:0 18px}
-    li{margin:6px 0; color:var(--muted)}
-    .cta{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
-    a.btn{background:var(--brand); color:#fff; text-decoration:none; padding:10px 14px; border-radius:10px; font-weight:700}
-    a.btn.secondary{background:#e9f0ff; color:var(--brand)}
-    .contact{font-size:14px; color:var(--muted); line-height:1.9}
-    footer{margin-top:16px; color:var(--muted); font-size:13px; text-align:center}
-    .brand-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
-    .pill{background:#f3f7ff;border:1px solid #e6efff;color:#0b5fff;padding:8px 10px;border-radius:999px;font-size:13px}
-    .about{white-space:pre-line}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:      #0B6FBF;
+      --brand-dark: #0957a0;
+      --brand-light:#e1f0ff;
+      --bg:         #f4f6f9;
+      --card:       #fff;
+      --text:       #111;
+      --muted:      #666;
+      --border:     #e8ecf0;
+      --radius:     12px;
+      --radius-lg:  16px;
+    }
+
+    body { font-family: 'Vazirmatn', system-ui, Arial; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    .nav { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: var(--brand); }
+    .nav-logo-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-links a { font-size: 14px; color: var(--muted); transition: color .15s; }
+    .nav-links a:hover { color: var(--brand); }
+
+    /* BTN */
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 11px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: background .15s; }
+    .btn-primary  { background: var(--brand); color: #fff; }
+    .btn-primary:hover  { background: var(--brand-dark); }
+    .btn-outline  { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+    .btn-outline:hover  { background: var(--brand-light); }
+    .btn-whatsapp { background: #25D366; color: #fff; }
+    .btn-whatsapp:hover { background: #1ebe5d; }
+
+    /* LAYOUT */
+    .container { max-width: 1080px; margin: 0 auto; padding: 32px 24px; }
+    .layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+
+    /* BREADCRUMB */
+    .breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .breadcrumb a { color: var(--brand); }
+
+    /* PROFILE CARD */
+    .profile-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px;
+      margin-bottom: 20px;
+    }
+    .profile-top { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 20px; }
+    .profile-logo {
+      width: 80px; height: 80px; border-radius: 16px;
+      object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;
+    }
+    .profile-logo-placeholder {
+      width: 80px; height: 80px; border-radius: 16px;
+      background: var(--brand-light); color: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px; flex-shrink: 0;
+    }
+    .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .profile-sub  { font-size: 14px; color: var(--muted); line-height: 1.8; }
+    .profile-sub span { display: inline-flex; align-items: center; gap: 4px; margin-left: 12px; }
+
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .badge { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+    .badge-blue  { background: var(--brand-light); color: var(--brand); }
+    .badge-green { background: #eaf3de; color: #3B6D11; }
+    .badge-gray  { background: #f1f1f1; color: #555; }
+
+    .profile-desc { font-size: 15px; color: #444; line-height: 1.9; white-space: pre-line; }
+
+    /* SECTION CARD */
+    .section-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px;
+      margin-bottom: 20px;
+    }
+    .section-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .section-card h2 i { color: var(--brand); font-size: 18px; }
+
+    /* WHY LIST */
+    .why-list { list-style: none; padding: 0; }
+    .why-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-size: 14px; color: #444;
+    }
+    .why-list li:last-child { border-bottom: none; }
+    .why-list li i { color: var(--brand); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+
+    /* CONTACT ROW */
+    .contact-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .contact-row:last-child { border-bottom: none; }
+    .contact-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--brand-light); color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .contact-label { font-size: 12px; color: var(--muted); }
+    .contact-value { font-size: 14px; font-weight: 500; }
+    .contact-value a { color: var(--brand); }
+
+    /* SIDEBAR */
+    .sidebar-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 22px;
+      margin-bottom: 16px; position: sticky; top: 76px;
+    }
+    .sidebar-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+    .cta-btns { display: flex; flex-direction: column; gap: 10px; }
+    .cta-btns .btn { justify-content: center; }
+
+    .map-link {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--brand); margin-top: 14px;
+      padding: 10px; background: var(--brand-light); border-radius: var(--radius);
+      justify-content: center;
+    }
+    .map-link:hover { background: #cde3f7; }
+
+    .sidebar-meta { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .sidebar-meta-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; }
+    .sidebar-meta-row span:first-child { color: var(--muted); }
+    .sidebar-meta-row span:last-child  { font-weight: 500; }
+
+    /* FOOTER */
+    footer { background: #0c2d52; color: #a8c8e8; padding: 28px 24px; margin-top: 40px; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
+    .footer-logo-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    footer p { font-size: 13px; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar-card { position: static; }
+      .profile-top { flex-direction: column; align-items: flex-start; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
-
 <body>
-  <main class="container">
-    <header>
-      <h1>{{ business.name }} | {{ business.activity }} در {{ business.city.name|default:business.city_name }}</h1>
-      <p class="sub">صفحه معرفی کوتاه و رسمی برای آشنایی با خدمات و مجموعه شما</p>
 
-      <div class="brand-row">
-        <span class="pill"><strong>دسته‌بندی:</strong> {{ business.category }}</span>
-        {% if business.phone %}<span class="pill"><strong>تلفن:</strong> {{ business.phone }}</span>{% endif %}
-        {% if business.email %}<span class="pill"><strong>ایمیل:</strong> {{ business.email }}</span>{% endif %}
-      </div>
-    </header>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="{% url 'home' %}">
+      <div class="nav-logo-icon"><i class="ti ti-search"></i></div>
+      جستجو
+    </a>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">صفحه اول</a>
+      <a href="{% url 'business_list' %}">همه کسب‌وکارها</a>
+      <a href="#">درباره ما</a>
+      <a class="btn btn-primary" href="#">ثبت کسب‌وکار</a>
+    </div>
+  </div>
+</nav>
 
-    <section class="grid">
-      <div class="card">
-        <h2>درباره ما</h2>
-        <div class="about">
+<div class="container">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="{% url 'home' %}">خانه</a>
+    <i class="ti ti-chevron-left" style="font-size:13px"></i>
+    <a href="{% url 'business_list' %}">کسب‌وکارها</a>
+    <i class="ti ti-chevron-left" style="font-size:13px"></i>
+    <span>{{ business.name }}</span>
+  </div>
+
+  <div class="layout">
+
+    <!-- MAIN COLUMN -->
+    <div>
+
+      <!-- PROFILE -->
+      <div class="profile-card">
+        <div class="profile-top">
+          {% if business.logo %}
+            <img class="profile-logo" src="{{ business.logo.url }}" alt="لوگو {{ business.name }}">
+          {% else %}
+            <div class="profile-logo-placeholder">
+              {% if business.category == 'company' %}<i class="ti ti-briefcase"></i>
+              {% elif business.category == 'person'  %}<i class="ti ti-user"></i>
+              {% elif business.category == 'service' %}<i class="ti ti-tools"></i>
+              {% else %}<i class="ti ti-building-store"></i>{% endif %}
+            </div>
+          {% endif %}
+          <div>
+            <div class="profile-name">{{ business.name }}</div>
+            <div class="profile-sub">
+              <span><i class="ti ti-tag" style="font-size:13px"></i> {{ business.activity }}</span>
+              <span><i class="ti ti-map-pin" style="font-size:13px"></i> {{ business.get_city_display_name }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="badges">
+          {% if business.is_verified %}
+            <span class="badge badge-green"><i class="ti ti-circle-check"></i> تایید شده</span>
+          {% endif %}
+          <span class="badge badge-blue">{{ business.get_category_display }}</span>
+          {% if business.phone %}
+            <span class="badge badge-gray"><i class="ti ti-phone"></i> {{ business.phone }}</span>
+          {% endif %}
+        </div>
+
+        <div class="profile-desc">
           {% if business.about_text %}
             {{ business.about_text }}
+          {% elif business.short_description %}
+            {{ business.short_description }}
           {% else %}
-            <p style="color:var(--muted); margin:0;">
-              {{ business.short_description|default:"در حال تکمیل..." }}
-            </p>
+            <span style="color:var(--muted)">اطلاعات در حال تکمیل است.</span>
           {% endif %}
         </div>
       </div>
 
-      <div class="card">
-        <h2>چرا این مجموعه؟</h2>
-        <ul>
-          <li>کیفیت و دقت در انجام کار</li>
-          <li>پاسخگویی سریع و راهنمایی قبل از خرید/سفارش</li>
-          <li>ارائه خدمات در {{ business.city.name|default:business.city_name }} و مناطق اطراف</li>
-          <li>امکان ثبت سفارش و هماهنگی از طریق تماس/واتساپ</li>
+      <!-- WHY -->
+      <div class="section-card">
+        <h2><i class="ti ti-star"></i> چرا این مجموعه؟</h2>
+        <ul class="why-list">
+          <li><i class="ti ti-check"></i> کیفیت و دقت در ارائه خدمات</li>
+          <li><i class="ti ti-check"></i> پاسخگویی سریع پیش از سفارش</li>
+          <li><i class="ti ti-check"></i> فعالیت در {{ business.get_city_display_name }} و مناطق اطراف</li>
+          <li><i class="ti ti-check"></i> امکان هماهنگی از طریق تماس و واتساپ</li>
         </ul>
       </div>
 
-      <div class="card">
-        <h2>اطلاعات تماس</h2>
-        <div class="contact">
-          <p>
-            <strong>تلفن/واتساپ:</strong>
-            {% if business.phone %}
-              <span>{{ business.phone }}</span>
-            {% else %}
-              <span>—</span>
-            {% endif %}
-          </p>
+      <!-- CONTACT -->
+      <div class="section-card">
+        <h2><i class="ti ti-address-book"></i> اطلاعات تماس</h2>
 
-          <p>
-            <strong>آدرس:</strong>
-            {% if address and address.address_line1 %}
-              <span>
-                {% if address.state %}{{ address.state }}، {% endif %}
-                {{ address.address_line1 }}
-                {% if address.address_line2 %}، {{ address.address_line2 }}{% endif %}
-                {% if address.postal_code %} (کدپستی: {{ address.postal_code }}){% endif %}
-              </span>
-            {% else %}
-              <span>—</span>
-            {% endif %}
-          </p>
-
-          <p>
-            <strong>ساعات کاری:</strong>
-            <span>{% if address and address.google_map_url %}طبق هماهنگی{% else %}—{% endif %}</span>
-          </p>
+        {% if business.phone %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-phone"></i></div>
+          <div>
+            <div class="contact-label">تلفن</div>
+            <div class="contact-value"><a href="tel:{{ business.phone }}">{{ business.phone }}</a></div>
+          </div>
         </div>
+        {% endif %}
 
-        <div class="cta">
+        {% if business.whatsapp %}
+        <div class="contact-row">
+          <div class="contact-icon" style="background:#dcf8e8; color:#25D366"><i class="ti ti-brand-whatsapp"></i></div>
+          <div>
+            <div class="contact-label">واتساپ</div>
+            <div class="contact-value"><a href="https://wa.me/{{ business.whatsapp }}">{{ business.whatsapp }}</a></div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if business.email %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-mail"></i></div>
+          <div>
+            <div class="contact-label">ایمیل</div>
+            <div class="contact-value"><a href="mailto:{{ business.email }}">{{ business.email }}</a></div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if business.website %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-world"></i></div>
+          <div>
+            <div class="contact-label">وب‌سایت</div>
+            <div class="contact-value"><a href="{{ business.website }}" target="_blank" rel="noopener">{{ business.website }}</a></div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if address and address.address_line1 %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-map-pin"></i></div>
+          <div>
+            <div class="contact-label">آدرس</div>
+            <div class="contact-value">
+              {% if address.state %}{{ address.state }}، {% endif %}
+              {{ address.address_line1 }}
+              {% if address.address_line2 %}، {{ address.address_line2 }}{% endif %}
+              {% if address.postal_code %} — کدپستی: {{ address.postal_code }}{% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+    </div><!-- /main col -->
+
+    <!-- SIDEBAR -->
+    <aside>
+      <div class="sidebar-card">
+        <h3>ارتباط با {{ business.name }}</h3>
+        <div class="cta-btns">
           {% if business.phone %}
-            <a class="btn" href="tel:{{ business.phone }}">تماس مستقیم</a>
+            <a class="btn btn-primary" href="tel:{{ business.phone }}">
+              <i class="ti ti-phone"></i> تماس مستقیم
+            </a>
           {% endif %}
-
           {% if business.whatsapp %}
-            {# whatsapp معمولاً باید بدون + و فقط رقم باشه، اگر فرمتی نداری بعداً اصلاح می‌کنم #}
-            <a class="btn secondary" href="https://wa.me/{{ business.whatsapp|cut:"+"
-              }}">ارسال پیام در واتساپ</a>
+            <a class="btn btn-whatsapp" href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener">
+              <i class="ti ti-brand-whatsapp"></i> پیام در واتساپ
+            </a>
+          {% endif %}
+          {% if business.email %}
+            <a class="btn btn-outline" href="mailto:{{ business.email }}">
+              <i class="ti ti-mail"></i> ارسال ایمیل
+            </a>
+          {% endif %}
+        </div>
+
+        {% if address and address.google_map_url %}
+          <a class="map-link" href="{{ address.google_map_url }}" target="_blank" rel="noopener">
+            <i class="ti ti-map"></i> مشاهده روی نقشه
+          </a>
+        {% endif %}
+
+        <div class="sidebar-meta">
+          <div class="sidebar-meta-row">
+            <span>دسته‌بندی</span>
+            <span>{{ business.get_category_display }}</span>
+          </div>
+          <div class="sidebar-meta-row">
+            <span>شهر</span>
+            <span>{{ business.get_city_display_name }}</span>
+          </div>
+          <div class="sidebar-meta-row">
+            <span>حوزه فعالیت</span>
+            <span>{{ business.activity }}</span>
+          </div>
+          {% if business.is_verified %}
+          <div class="sidebar-meta-row">
+            <span>وضعیت</span>
+            <span style="color:#3B6D11">✓ تایید شده</span>
+          </div>
           {% endif %}
         </div>
       </div>
 
-      {# Structured Data (اختیاری ولی خوب) #}
-      <div class="card" itemscope itemtype="https://schema.org/LocalBusiness">
-        <h2>نشانی در موتورهای جستجو</h2>
-        <div style="color:var(--muted);line-height:1.9;font-size:14px;">
-          <p><strong>تلفن:</strong> <span itemprop="telephone">{{ business.phone|default:"" }}</span></p>
-          <p>
-            <strong>آدرس:</strong>
-            <span itemprop="address">
-              {% if address %}{{ address.state }}، {{ address.address_line1 }}{% endif %}
-            </span>
-          </p>
-        </div>
+      <div class="sidebar-card" style="text-align:center; background: var(--brand-light); border-color: #b0d8f7;">
+        <div style="font-size:13px; color:var(--brand); margin-bottom:12px; font-weight:500;">آیا این کسب‌وکار شماست؟</div>
+        <a class="btn btn-outline" href="#" style="width:100%; justify-content:center;">
+          <i class="ti ti-edit"></i> ویرایش اطلاعات
+        </a>
       </div>
-    </section>
+    </aside>
 
-    <footer>
-      © {{ now_year }} {{ business.name }} | ساخته‌شده برای معرفی سریع و سئو
-    </footer>
-  </main>
+  </div><!-- /layout -->
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a class="footer-logo" href="{% url 'home' %}">
+      <div class="footer-logo-icon"><i class="ti ti-search"></i></div>
+      جستجو
+    </a>
+    <p>© {% now "Y" %} جستجو — تمامی حقوق محفوظ است</p>
+  </div>
+</footer>
+
 </body>
 </html>
