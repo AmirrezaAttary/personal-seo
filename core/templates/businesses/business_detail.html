@@ -200,9 +200,10 @@
       جستجو
     </a>
     <div class="nav-links">
-      <a href="{% url 'home' %}">صفحه اول</a>
-      <a href="{% url 'business_list' %}">همه کسب‌وکارها</a>
-      <a href="#">درباره ما</a>
+      <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>صفحه اول</a>
+      <a href="{% url 'business_list' %}" {% if request.resolver_match.url_name == 'business_list' %}class="active"{% endif %}>همه کسب‌وکارها</a>
+      <a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>درباره ما</a>
+      <a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>تماس</a>
       <a class="btn btn-primary" href="#">ثبت کسب‌وکار</a>
     </div>
   </div>
@@ -403,13 +404,40 @@
 </div><!-- /container -->
 
 <!-- FOOTER -->
-<footer>
+<footer class="site-footer">
   <div class="footer-inner">
-    <a class="footer-logo" href="{% url 'home' %}">
-      <div class="footer-logo-icon"><i class="ti ti-search"></i></div>
-      جستجو
-    </a>
-    <p>© {% now "Y" %} جستجو — تمامی حقوق محفوظ است</p>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <div class="footer-logo-icon"><i class="ti ti-search"></i></div>
+          جستجو
+        </div>
+        <p>پلتفرم هوشمند معرفی کسب‌وکار در ایران. از مغازه‌های محلی تا شرکت‌های بزرگ را به مشتریان واقعی وصل می‌کنیم.</p>
+      </div>
+      <div>
+        <h4>لینک‌های مفید</h4>
+        <a href="{% url 'about' %}">درباره ما</a>
+        <a href="{% url 'contact' %}">تماس با ما</a>
+        <a href="{% url 'terms' %}">قوانین و مقررات</a>
+        <a href="{% url 'business_list' %}">لیست کسب‌وکارها</a>
+      </div>
+      <div>
+        <h4>دسته‌بندی‌ها</h4>
+        <a href="{% url 'business_list' %}?activity=رستوران">رستوران و کافه</a>
+        <a href="{% url 'business_list' %}?activity=پزشک">پزشکی</a>
+        <a href="{% url 'business_list' %}?activity=آموزشگاه">آموزش</a>
+        <a href="{% url 'business_list' %}?activity=خدمات">خدمات</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {% now "Y" %} جستجو — تمامی حقوق محفوظ است</span>
+      <a referrerpolicy="origin" target="_blank"
+         href="https://trustseal.enamad.ir/?id=738875&Code=YLkhpOQz6I9TnI7OMlJYNrtJMktJGvL2">
+        <img referrerpolicy="origin"
+             src="https://api.manmarket.ir/static/img/E.namad.png"
+             alt="اینماد" style="height:54px; opacity:.75; vertical-align:middle">
+      </a>
+    </div>
   </div>
 </footer>
 
