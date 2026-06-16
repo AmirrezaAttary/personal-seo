@@ -1,0 +1,163 @@
+{% extends "businesses/base.html" %}
+
+{% block title %}قوانین و مقررات | جستجو{% endblock %}
+{% block meta_description %}قوانین و مقررات استفاده از پلتفرم جستجو. حقوق و مسئولیت‌های کاربران و صاحبان کسب‌وکار.{% endblock %}
+
+{% block extra_css %}
+.terms-layout { display: grid; grid-template-columns: 1fr 240px; gap: 24px; align-items: start; }
+
+.terms-body { font-size: 15px; color: #333; line-height: 2; }
+.terms-body h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 28px 0 12px; display: flex; align-items: center; gap: 8px; }
+.terms-body h3 i { color: var(--brand); }
+.terms-body h3:first-child { margin-top: 0; }
+.terms-body p { margin-bottom: 12px; color: #444; }
+.terms-body ul { padding-right: 20px; margin-bottom: 12px; }
+.terms-body ul li { margin-bottom: 7px; color: #444; }
+.terms-body .highlight-box {
+  background: var(--brand-light); border-right: 4px solid var(--brand);
+  padding: 14px 16px; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 14px; color: var(--brand); margin: 16px 0;
+}
+
+/* TOC (sidebar) */
+.toc { position: sticky; top: 76px; }
+.toc-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+.toc-list { list-style: none; }
+.toc-list li a {
+  display: block; font-size: 13px; color: var(--muted);
+  padding: 6px 0; border-bottom: 1px solid var(--border);
+  transition: color .15s;
+}
+.toc-list li:last-child a { border-bottom: none; }
+.toc-list li a:hover { color: var(--brand); }
+
+.update-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--brand-light); color: var(--brand);
+  font-size: 12px; padding: 5px 12px; border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .terms-layout { grid-template-columns: 1fr; }
+  .toc { display: none; }
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="{% url 'home' %}">خانه</a>
+      <i class="ti ti-chevron-left" style="font-size:13px"></i>
+      <span>قوانین و مقررات</span>
+    </div>
+    <h1>قوانین و مقررات</h1>
+    <p>لطفاً پیش از استفاده از خدمات جستجو، این شرایط را مطالعه کنید.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="terms-layout">
+
+    <!-- TERMS BODY -->
+    <div>
+      <div class="card">
+        <div class="update-badge">
+          <i class="ti ti-calendar" style="font-size:13px"></i>
+          آخرین بروزرسانی: خرداد ۱۴۰۴
+        </div>
+
+        <div class="terms-body">
+
+          <div class="highlight-box">
+            با استفاده از خدمات جستجو، شما این قوانین را پذیرفته‌اید. در صورت عدم توافق با هر بخشی، لطفاً از سرویس استفاده نکنید.
+          </div>
+
+          <h3 id="s1"><i class="ti ti-info-circle"></i> ۱. معرفی سرویس</h3>
+          <p>جستجو (jostajo.ir) یک پلتفرم آنلاین برای معرفی و ثبت کسب‌وکارهای ایرانی است. این سرویس به صاحبان کسب‌وکار امکان می‌دهد پروفایل آنلاین خود را ایجاد کنند و به مشتریان اجازه می‌دهد کسب‌وکارهای مرتبط را پیدا کنند.</p>
+
+          <h3 id="s2"><i class="ti ti-user-check"></i> ۲. شرایط ثبت‌نام</h3>
+          <p>برای ثبت کسب‌وکار در جستجو، باید شرایط زیر را داشته باشید:</p>
+          <ul>
+            <li>سن بالای ۱۸ سال یا داشتن مجوز از ولی قانونی</li>
+            <li>ارائه اطلاعات صحیح و کامل درباره کسب‌وکار</li>
+            <li>داشتن مجوز فعالیت قانونی (برای کسب‌وکارهای نیازمند مجوز)</li>
+            <li>عدم ثبت اطلاعات تکراری یا جعلی</li>
+          </ul>
+
+          <h3 id="s3"><i class="ti ti-file-text"></i> ۳. محتوای مجاز</h3>
+          <p>کاربران متعهد می‌شوند که محتوای ارسالی آن‌ها:</p>
+          <ul>
+            <li>دقیق، صادقانه و به‌روز باشد</li>
+            <li>ناقض حقوق دیگران نباشد</li>
+            <li>شامل محتوای غیرقانونی، توهین‌آمیز، یا گمراه‌کننده نباشد</li>
+            <li>حاوی تبلیغات گمراه‌کننده یا ادعاهای کاذب نباشد</li>
+            <li>اطلاعات شخصی دیگران را بدون اجازه منتشر نکند</li>
+          </ul>
+
+          <h3 id="s4"><i class="ti ti-ban"></i> ۴. محتوای غیرمجاز</h3>
+          <p>موارد زیر در جستجو ممنوع است:</p>
+          <ul>
+            <li>ثبت کسب‌وکارهای غیرقانونی یا فعالیت‌های خلاف قانون جمهوری اسلامی ایران</li>
+            <li>انتشار محتوای مستهجن، توهین‌آمیز یا نفرت‌انگیز</li>
+            <li>کپی یا سوءاستفاده از هویت کسب‌وکارهای دیگر</li>
+            <li>استفاده از ربات یا ابزار خودکار برای ثبت یا تغییر اطلاعات</li>
+            <li>هرگونه تلاش برای به خطر انداختن امنیت سایت</li>
+          </ul>
+
+          <h3 id="s5"><i class="ti ti-shield"></i> ۵. حریم خصوصی</h3>
+          <p>جستجو متعهد است اطلاعات شخصی کاربران را محفوظ نگه دارد. اطلاعاتی که هنگام ثبت‌نام دریافت می‌کنیم تنها برای بهبود خدمات استفاده می‌شود و به شخص ثالث فروخته نمی‌شود.</p>
+          <p>اطلاعات عمومی پروفایل کسب‌وکار (نام، حوزه فعالیت، شهر، تلفن) در دسترس عموم قرار می‌گیرد، بنابراین تنها اطلاعاتی را وارد کنید که مایل به عمومی شدن آن هستید.</p>
+
+          <h3 id="s6"><i class="ti ti-pencil"></i> ۶. ویرایش و حذف اطلاعات</h3>
+          <p>شما در هر زمان می‌توانید اطلاعات پروفایل خود را ویرایش کنید. درخواست حذف کامل حساب و اطلاعات را می‌توانید از طریق تماس با پشتیبانی ثبت کنید. حذف ظرف ۷ روز کاری انجام می‌شود.</p>
+
+          <h3 id="s7"><i class="ti ti-star"></i> ۷. مالکیت معنوی</h3>
+          <p>تمامی محتوایی که در جستجو ارسال می‌کنید (تصاویر، متون، اطلاعات) متعلق به شماست. با ثبت در جستجو، مجوز نمایش این محتوا در پلتفرم را به ما می‌دهید.</p>
+          <p>طراحی، کد، و ساختار جستجو متعلق به تیم جستجو است و کپی‌برداری از آن ممنوع است.</p>
+
+          <h3 id="s8"><i class="ti ti-credit-card"></i> ۸. خدمات پولی</h3>
+          <p>ثبت پایه در جستجو رایگان است. پلن‌های پیشرفته‌تر شامل هزینه ماهانه یا سالانه می‌شوند. شرایط پرداخت و بازگشت وجه برای هر پلن به‌صورت جداگانه توضیح داده شده است.</p>
+
+          <h3 id="s9"><i class="ti ti-alert-triangle"></i> ۹. محدودیت مسئولیت</h3>
+          <p>جستجو یک پلتفرم واسط است و مسئولیت مستقیمی در قبال معاملات بین کاربران و کسب‌وکارها ندارد. صحت اطلاعات ارائه‌شده توسط صاحبان کسب‌وکار، بر عهده خودشان است.</p>
+
+          <h3 id="s10"><i class="ti ti-refresh"></i> ۱۰. تغییر در قوانین</h3>
+          <p>جستجو حق دارد در هر زمان این قوانین را بروزرسانی کند. تغییرات مهم از طریق ایمیل یا اطلاعیه در سایت به کاربران اطلاع داده می‌شود. استمرار استفاده از سرویس پس از اعلام تغییرات، به منزله پذیرش آن‌ها است.</p>
+
+          <h3 id="s11"><i class="ti ti-scale"></i> ۱۱. قانون حاکم</h3>
+          <p>این قوانین تابع قوانین جمهوری اسلامی ایران است و هرگونه اختلاف در دادگاه‌های صالح ایران رسیدگی خواهد شد.</p>
+
+          <div class="highlight-box" style="margin-top: 28px;">
+            سؤال یا ابهامی داری؟ با ما از طریق <a href="{% url 'contact' %}" style="color: var(--brand); font-weight:700;">صفحه تماس</a> در ارتباط باش.
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR: TOC -->
+    <aside>
+      <div class="card toc">
+        <div class="toc-title"><i class="ti ti-list" style="color:var(--brand)"></i> فهرست مطالب</div>
+        <ul class="toc-list">
+          <li><a href="#s1">۱. معرفی سرویس</a></li>
+          <li><a href="#s2">۲. شرایط ثبت‌نام</a></li>
+          <li><a href="#s3">۳. محتوای مجاز</a></li>
+          <li><a href="#s4">۴. محتوای غیرمجاز</a></li>
+          <li><a href="#s5">۵. حریم خصوصی</a></li>
+          <li><a href="#s6">۶. ویرایش و حذف</a></li>
+          <li><a href="#s7">۷. مالکیت معنوی</a></li>
+          <li><a href="#s8">۸. خدمات پولی</a></li>
+          <li><a href="#s9">۹. محدودیت مسئولیت</a></li>
+          <li><a href="#s10">۱۰. تغییر قوانین</a></li>
+          <li><a href="#s11">۱۱. قانون حاکم</a></li>
+        </ul>
+      </div>
+    </aside>
+
+  </div>
+</div>
+{% endblock %}

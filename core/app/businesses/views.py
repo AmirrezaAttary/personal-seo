@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.db.models import Q, Count
 from .models import Business, City
 
@@ -90,3 +90,16 @@ class BusinessDetailView(DetailView):
         ctx["seo"]     = getattr(self.object, "seo", None)
         ctx["address"] = getattr(self.object, "address", None)
         return ctx
+    
+    
+    
+class AboutView(TemplateView):
+    template_name = "businesses/about.html"
+
+
+class ContactView(TemplateView):
+    template_name = "businesses/contact.html"
+
+
+class TermsView(TemplateView):
+    template_name = "businesses/terms.html"

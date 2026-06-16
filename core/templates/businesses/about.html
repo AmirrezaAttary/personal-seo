@@ -1,0 +1,195 @@
+{% extends "businesses/base.html" %}
+
+{% block title %}درباره ما | جستجو{% endblock %}
+{% block meta_description %}آشنایی با پلتفرم جستجو — هدف، مأموریت و تیم ما. چرا جستجو را برای معرفی کسب‌وکار خود انتخاب کنید.{% endblock %}
+
+{% block extra_css %}
+.hero-about {
+  background: linear-gradient(135deg, #0b5fff 0%, #1a9fe0 100%);
+  color: #fff; padding: 56px 24px; text-align: center;
+}
+.hero-about h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; margin-bottom: 14px; }
+.hero-about p  { font-size: 16px; opacity: .9; max-width: 560px; margin: 0 auto; line-height: 1.8; }
+
+.about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.about-layout .card { margin-bottom: 0; }
+
+.mission-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.mission-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px; text-align: center;
+}
+.mission-icon {
+  width: 52px; height: 52px; background: var(--brand-light); color: var(--brand);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin: 0 auto 14px;
+}
+.mission-item h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.mission-item p  { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+.story-text { font-size: 15px; color: #444; line-height: 2; }
+.story-text p { margin-bottom: 14px; }
+.story-text p:last-child { margin-bottom: 0; }
+
+.values-list { list-style: none; }
+.values-list li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+}
+.values-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.values-list li i { color: var(--brand); font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+.values-list li strong { display: block; margin-bottom: 2px; }
+.values-list li span { color: var(--muted); font-size: 13px; }
+
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.team-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px; text-align: center;
+}
+.team-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--brand-light); color: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin: 0 auto 12px;
+}
+.team-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.team-card p  { font-size: 13px; color: var(--muted); }
+
+.cta-banner {
+  background: var(--brand); color: #fff;
+  border-radius: var(--radius-lg); padding: 40px 32px;
+  text-align: center; margin-top: 32px;
+}
+.cta-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+.cta-banner p  { font-size: 15px; opacity: .9; margin-bottom: 24px; }
+.btn-white { background: #fff; color: var(--brand); border: none; border-radius: var(--radius); padding: 11px 24px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+.btn-white:hover { background: #f0f4ff; }
+
+@media (max-width: 768px) {
+  .about-layout { grid-template-columns: 1fr; }
+  .mission-grid  { grid-template-columns: 1fr; }
+}
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero-about">
+  <h1>درباره جستجو</h1>
+  <p>ما یه پلتفرم ساختیم که هر کسب‌وکار ایرانی، از کوچک‌ترین مغازه تا بزرگ‌ترین شرکت، بتونه دیده بشه.</p>
+</section>
+
+<div class="container">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb" style="margin-bottom: 28px;">
+    <a href="{% url 'home' %}">خانه</a>
+    <i class="ti ti-chevron-left" style="font-size:13px"></i>
+    <span>درباره ما</span>
+  </div>
+
+  <!-- MISSION -->
+  <div style="margin-bottom: 12px;">
+    <h2 style="font-size:18px; font-weight:700; margin-bottom:20px;">مأموریت ما</h2>
+  </div>
+  <div class="mission-grid">
+    <div class="mission-item">
+      <div class="mission-icon"><i class="ti ti-eye"></i></div>
+      <h3>دیده شدن</h3>
+      <p>هر کسب‌وکاری حق داره در جستجوهای آنلاین پیدا بشه؛ ما این مسیر رو هموار می‌کنیم.</p>
+    </div>
+    <div class="mission-item">
+      <div class="mission-icon"><i class="ti ti-chart-line"></i></div>
+      <h3>رشد واقعی</h3>
+      <p>با سئوی هدفمند، مشتری‌هایی رو جذب کن که دقیقاً دنبال خدمات تو هستن.</p>
+    </div>
+    <div class="mission-item">
+      <div class="mission-icon"><i class="ti ti-shield-check"></i></div>
+      <h3>اعتماد‌سازی</h3>
+      <p>پروفایل تأییدشده‌ات نشون می‌ده که یه برند قابل اعتمادی هستی.</p>
+    </div>
+  </div>
+
+  <!-- STORY + VALUES -->
+  <div class="about-layout">
+    <div class="card">
+      <h2><i class="ti ti-book"></i> داستان جستجو</h2>
+      <div class="story-text">
+        <p>جستجو از یه دغدغه‌ی واقعی شروع شد: چرا اینقدر سخته که کسب‌وکارهای خوب ایرانی رو آنلاین پیدا کنیم؟</p>
+        <p>خیلی از مغازه‌ها، کلینیک‌ها، آموزشگاه‌ها و شرکت‌های فعال، هیچ حضور آنلاین درستی ندارن — نه به خاطر اینکه نمی‌خوان، بلکه چون نمی‌دونن از کجا شروع کنن یا هزینه‌اش براشون زیاده.</p>
+        <p>ما ساختیم که این فاصله رو از بین ببریم. یه پروفایل ساده، بهینه‌شده برای سئو، که هر صاحب کسب‌وکاری بتونه در چند دقیقه راه بندازتش.</p>
+        <p>امروز هزاران کسب‌وکار از سراسر ایران در جستجو ثبت‌شده‌اند و هر روز مشتری‌های جدیدی پیدا می‌کنن.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><i class="ti ti-heart"></i> ارزش‌های ما</h2>
+      <ul class="values-list">
+        <li>
+          <i class="ti ti-users"></i>
+          <div>
+            <strong>کسب‌وکار در اول</strong>
+            <span>هر تصمیمی که می‌گیریم بر اساس اینه که چقدر به صاحب کسب‌وکار کمک می‌کنه.</span>
+          </div>
+        </li>
+        <li>
+          <i class="ti ti-lock"></i>
+          <div>
+            <strong>شفافیت کامل</strong>
+            <span>هیچ هزینه پنهانی وجود نداره. اون چیزی که می‌بینی، همونیه که هست.</span>
+          </div>
+        </li>
+        <li>
+          <i class="ti ti-refresh"></i>
+          <div>
+            <strong>بهبود مستمر</strong>
+            <span>هر هفته چیز جدیدی اضافه می‌کنیم — بر اساس بازخورد کاربران.</span>
+          </div>
+        </li>
+        <li>
+          <i class="ti ti-map-pin"></i>
+          <div>
+            <strong>ساخته‌شده برای ایران</strong>
+            <span>طراحی‌شده با درک عمیق از بازار، فرهنگ و نیازهای کسب‌وکار ایرانی.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <h2 style="font-size:18px; font-weight:700; margin-bottom:20px;">تیم ما</h2>
+  <div class="team-grid" style="margin-bottom: 32px;">
+    <div class="team-card">
+      <div class="team-avatar"><i class="ti ti-user"></i></div>
+      <h3>امیررضا عطاری</h3>
+      <p>بنیان‌گذار و توسعه‌دهنده</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"><i class="ti ti-palette"></i></div>
+      <h3>تیم طراحی</h3>
+      <p>UI/UX و تجربه کاربری</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"><i class="ti ti-chart-bar"></i></div>
+      <h3>تیم سئو</h3>
+      <p>بهینه‌سازی موتور جستجو</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar"><i class="ti ti-headset"></i></div>
+      <h3>پشتیبانی</h3>
+      <p>همیشه در کنار شما</p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <h2>آماده‌ای کسب‌وکارت رو ثبت کنی؟</h2>
+    <p>رایگان شروع کن — در کمتر از ۵ دقیقه.</p>
+    <a class="btn-white" href="#">
+      <i class="ti ti-plus"></i> ثبت رایگان کسب‌وکار
+    </a>
+  </div>
+
+</div>
+{% endblock %}
