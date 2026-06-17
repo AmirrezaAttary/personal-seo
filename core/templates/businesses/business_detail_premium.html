@@ -1,0 +1,884 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% if seo and seo.title %}{{ seo.title }}{% else %}{{ business.name }} | {{ business.activity }} در {{ business.get_city_display_name }}{% endif %}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/logo/favicon.png' %}">
+  <meta name="description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:160 }}{% endif %}">
+  {% if seo and not seo.robots_index %}<meta name="robots" content="noindex">{% endif %}
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+  <meta property="og:locale"      content="fa_IR">
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="{{ business.name }} | {{ business.activity }}">
+  <meta property="og:description" content="{{ business.short_description|default:business.about_text|truncatechars:160 }}">
+  <meta property="og:url"         content="{{ request.build_absolute_uri }}">
+  {% if seo and seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "{{ business.name }}",
+    "description": "{{ business.short_description|default:business.about_text|truncatechars:200 }}",
+    {% if business.phone %}"telephone": "{{ business.phone }}",{% endif %}
+    {% if business.email %}"email": "{{ business.email }}",{% endif %}
+    {% if business.website %}"url": "{{ business.website }}",{% endif %}
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "{{ business.get_city_display_name }}",
+      {% if address and address.state %}"addressRegion": "{{ address.state }}",{% endif %}
+      {% if address and address.postal_code %}"postalCode": "{{ address.postal_code }}",{% endif %}
+      "addressCountry": "IR"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:        {{ theme_colors.primary|default:"#C9A84C" }};
+      --gold-dark:   {{ theme_colors.secondary|default:"#B8963E" }};
+      --bg:          {{ theme_colors.background|default:"#0D0D0D" }};
+      --text:        {{ theme_colors.text|default:"#F5E6C8" }};
+      --accent:      {{ theme_colors.accent|default:"#FFD700" }};
+      --card:        #111111;
+      --card-border: rgba(201,168,76,.25);
+      --card-hover:  rgba(201,168,76,.08);
+      --muted:       rgba(245,230,200,.5);
+      --radius:      14px;
+      --radius-lg:   20px;
+      --radius-xl:   28px;
+    }
+
+    body {
+      font-family: 'Vazirmatn', system-ui, Arial;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+    /* ─── NAV ─── */
+    .nav {
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 20px;
+      height: 58px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 17px; font-weight: 800; color: var(--gold);
+    }
+    .nav-logo-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      display: flex; align-items: center; justify-content: center;
+      color: #000; font-size: 15px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 18px; }
+    .nav-links a { font-size: 14px; color: var(--muted); transition: color .15s; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ─── LAYOUT ─── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px 48px; }
+
+    .breadcrumb {
+      font-size: 13px; color: var(--muted); margin-bottom: 22px;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--gold); }
+
+    .layout { display: grid; grid-template-columns: 1fr 310px; gap: 20px; align-items: start; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 22px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      border: none; font-family: inherit; transition: all .18s;
+      text-align: center; justify-content: center;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #000; box-shadow: 0 4px 20px rgba(201,168,76,.3);
+    }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(201,168,76,.45); }
+    .btn-outline-gold {
+      background: transparent; color: var(--gold);
+      border: 1.5px solid rgba(201,168,76,.5);
+    }
+    .btn-outline-gold:hover { background: rgba(201,168,76,.08); border-color: var(--gold); }
+    .btn-whatsapp  { background: #25D366; color: #000; }
+    .btn-whatsapp:hover  { background: #1ebe5d; transform: translateY(-1px); }
+    .btn-telegram  { background: #2AABEE; color: #000; }
+    .btn-telegram:hover  { background: #1a9bd8; }
+    .btn-full { width: 100%; }
+
+    /* ─── HERO CARD ─── */
+    .vcard {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--card-border);
+      overflow: hidden;
+      margin-bottom: 18px;
+      box-shadow: 0 0 60px rgba(201,168,76,.08), 0 2px 32px rgba(0,0,0,.6);
+    }
+
+    .vcard-header {
+      padding: 32px 24px 70px;
+      position: relative;
+      text-align: center;
+      {% if theme and theme.header_bg_image %}
+        background: linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.85) 100%),
+                    url('{{ theme.header_bg_image.url }}') center/cover no-repeat;
+      {% else %}
+        background: linear-gradient(160deg, #0a0a0a 0%, #1a1508 50%, #0a0a0a 100%);
+      {% endif %}
+    }
+
+    .vcard-header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(201,168,76,.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(201,168,76,.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* موج پایین هدر — مثل تمپلیت پیش‌فرض */
+    .vcard-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 48px;
+      background: var(--card);
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+
+    .vcard-header-circles {
+      position: absolute; inset: 0; overflow: hidden;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .vcard-header-circles span {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(201,168,76,.1);
+    }
+    .vcard-header-circles span:nth-child(1) { width: 260px; height: 260px; top: -120px; left: -80px; }
+    .vcard-header-circles span:nth-child(2) { width: 160px; height: 160px; top: -60px; right: -40px; }
+    .vcard-header-circles span:nth-child(3) { width: 70px;  height: 70px;  bottom: 30px; left: 50px; }
+
+    .vcard-avatar-wrap {
+      position: relative; display: inline-block;
+      margin-bottom: 14px; z-index: 1;
+    }
+    .vcard-avatar, .vcard-avatar-ph {
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 0 6px rgba(201,168,76,.15), 0 4px 20px rgba(0,0,0,.4);
+    }
+    .vcard-avatar { object-fit: cover; }
+    .vcard-avatar-ph {
+      background: linear-gradient(135deg, #1a1508, #0a0a0a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 42px; color: var(--gold);
+    }
+    .vcard-verified {
+      position: absolute; bottom: 4px; left: 0;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border: 3px solid #111;
+      display: flex; align-items: center; justify-content: center;
+      color: #000; font-size: 12px;
+    }
+
+    .vcard-name {
+      font-size: 22px; font-weight: 900; color: var(--gold);
+      margin-bottom: 6px; line-height: 1.3; position: relative; z-index: 1;
+      text-shadow: 0 2px 12px rgba(201,168,76,.3);
+    }
+    .vcard-meta {
+      font-size: 13px; color: rgba(245,230,200,.7);
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      flex-wrap: wrap; position: relative; z-index: 1;
+    }
+    .vcard-meta span { display: inline-flex; align-items: center; gap: 4px; }
+    .vcard-tagline {
+      font-size: 12px; color: rgba(201,168,76,.55);
+      margin-top: 10px; font-style: italic;
+      position: relative; z-index: 1;
+    }
+
+    .vcard-body { padding: 16px 24px 24px; }
+
+    .vcard-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; justify-content: center; }
+    .badge {
+      font-size: 12px; padding: 5px 13px; border-radius: 20px;
+      font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .badge-gold  { background: linear-gradient(135deg, rgba(201,168,76,.2), rgba(201,168,76,.1)); color: var(--gold); border: 1px solid rgba(201,168,76,.3); }
+    .badge-green { background: rgba(34,197,94,.1); color: #4ade80; border: 1px solid rgba(34,197,94,.2); }
+    .badge-muted { background: rgba(255,255,255,.05); color: var(--muted); border: 1px solid rgba(255,255,255,.1); }
+
+    .vcard-desc {
+      font-size: 14px; color: rgba(245,230,200,.8); line-height: 1.9;
+      white-space: pre-line;
+      border-top: 1px solid var(--card-border);
+      padding-top: 18px;
+    }
+
+    /* ─── SECTION CARDS ─── */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 12px rgba(0,0,0,.25);
+    }
+    .section-card h2 {
+      font-size: 15px; font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px; color: var(--gold);
+    }
+    .section-card h2 i { font-size: 18px; }
+
+    /* ─── ENDORSEMENTS ─── */
+    .endorsement-card {
+      background: linear-gradient(135deg, rgba(201,168,76,.07), rgba(201,168,76,.03));
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 14px;
+      position: relative; overflow: hidden;
+    }
+    .endorsement-card::before {
+      content: '"';
+      position: absolute; top: 6px; right: 14px;
+      font-size: 56px; line-height: 1; color: rgba(201,168,76,.1);
+      font-family: Georgia, serif;
+    }
+    .endorsement-card:last-child { margin-bottom: 0; }
+    .endorsement-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .endorsement-photo {
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid var(--gold); object-fit: cover; flex-shrink: 0;
+    }
+    .endorsement-photo-ph {
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(201,168,76,.4);
+      background: rgba(201,168,76,.1);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 18px; flex-shrink: 0;
+    }
+    .endorsement-issuer-name { font-size: 14px; font-weight: 700; color: var(--gold); }
+    .endorsement-issuer-title { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .endorsement-badge {
+      margin-right: auto;
+      background: rgba(201,168,76,.15); color: var(--gold);
+      border: 1px solid rgba(201,168,76,.35);
+      font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+      white-space: nowrap;
+    }
+    .endorsement-text {
+      font-size: 13px; color: rgba(245,230,200,.75);
+      line-height: 2; border-top: 1px solid rgba(201,168,76,.1);
+      padding-top: 12px; font-style: italic;
+    }
+    .endorsement-date { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+    /* ─── DOCUMENTS ─── */
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .doc-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      text-align: center; transition: all .2s;
+    }
+    .doc-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(201,168,76,.4);
+      transform: translateY(-2px);
+    }
+    .doc-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(201,168,76,.12);
+      border: 1px solid rgba(201,168,76,.2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 20px;
+    }
+    .doc-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .doc-type  { font-size: 11px; color: var(--muted); }
+    .doc-desc  { font-size: 11px; color: var(--muted); line-height: 1.6; }
+    .doc-download {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; color: var(--gold);
+      padding: 6px 14px; border-radius: 8px;
+      border: 1px solid rgba(201,168,76,.3);
+      background: rgba(201,168,76,.07); transition: all .15s;
+    }
+    .doc-download:hover { background: rgba(201,168,76,.15); border-color: var(--gold); }
+
+    /* ─── SOCIAL ─── */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .social-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 14px 10px; border-radius: var(--radius); font-size: 12px;
+      font-weight: 600; transition: all .18s;
+      border: 1px solid rgba(201,168,76,.2);
+      background: rgba(255,255,255,.03);
+      color: var(--muted); cursor: pointer;
+    }
+    .social-btn i { font-size: 22px; color: var(--gold); }
+    .social-btn:hover {
+      background: var(--card-hover);
+      border-color: rgba(201,168,76,.5);
+      color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(201,168,76,.12);
+    }
+
+    /* ─── CONTACT ─── */
+    .contact-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 0; border-bottom: 1px solid rgba(201,168,76,.1);
+      font-size: 14px;
+    }
+    .contact-row:last-child { border-bottom: none; }
+    .contact-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(201,168,76,.1);
+      border: 1px solid rgba(201,168,76,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: var(--gold); flex-shrink: 0;
+    }
+    .contact-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+    .contact-value { font-size: 14px; font-weight: 600; color: var(--text); }
+    .contact-value a { color: var(--gold); }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 20px;
+      margin-bottom: 16px; position: sticky; top: 74px;
+      box-shadow: 0 1px 12px rgba(0,0,0,.25), 0 0 40px rgba(201,168,76,.04);
+    }
+    .sidebar-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--muted); }
+    .cta-btns { display: flex; flex-direction: column; gap: 10px; }
+
+    .map-link {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--gold); margin-top: 12px;
+      padding: 11px; background: rgba(201,168,76,.07);
+      border: 1px solid rgba(201,168,76,.2);
+      border-radius: var(--radius); justify-content: center; font-weight: 600;
+      transition: all .15s;
+    }
+    .map-link:hover { background: rgba(201,168,76,.14); border-color: rgba(201,168,76,.4); }
+
+    .sidebar-meta { margin-top: 16px; border-top: 1px solid var(--card-border); padding-top: 14px; }
+    .sidebar-meta-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(201,168,76,.07);
+    }
+    .sidebar-meta-row:last-child { border-bottom: none; }
+    .sidebar-meta-row span:first-child { color: var(--muted); }
+    .sidebar-meta-row span:last-child  { font-weight: 600; color: var(--text); }
+
+    /* ─── QR ─── */
+    .qr-card {
+      background: var(--card); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 12px rgba(0,0,0,.25);
+    }
+    .qr-card h3 { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 14px; }
+    .qr-card img {
+      width: 160px; height: 160px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      padding: 8px; background: #fff;
+    }
+    .qr-card p { font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+    .qr-download {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 12px; font-size: 12px; color: var(--gold);
+      font-weight: 600; padding: 8px 16px;
+      background: rgba(201,168,76,.08); border-radius: 8px;
+      border: 1px solid rgba(201,168,76,.2); transition: all .15s;
+    }
+    .qr-download:hover { background: rgba(201,168,76,.15); }
+
+    /* ─── FOOTER ─── */
+    footer { background: #050505; border-top: 1px solid var(--card-border); color: var(--muted); padding: 32px 24px; margin-top: 20px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; margin-bottom: 28px;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; color: var(--gold); margin-bottom: 12px; }
+    .footer-logo-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      display: flex; align-items: center; justify-content: center; color: #000; font-size: 13px;
+    }
+    .footer-grid > div p { font-size: 13px; line-height: 1.8; }
+    .footer-grid > div h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+    .footer-grid > div a { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; transition: color .15s; }
+    .footer-grid > div a:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08); padding-top: 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; font-size: 13px;
+    }
+
+    /* ─── MOBILE BOTTOM BAR ─── */
+    .mobile-cta {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(10,10,10,.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--card-border);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      z-index: 200; gap: 10px;
+    }
+    .mobile-cta .btn { flex: 1; font-size: 13px; padding: 13px 10px; }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE — موبایل
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+
+      /* گرید یک‌ستونه */
+      .layout { grid-template-columns: 1fr; }
+      .sidebar-card { position: static; }
+
+      /* فوتر یک‌ستونه */
+      .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      /* نوار پایین */
+      .mobile-cta { display: flex; }
+      .container { padding-bottom: 90px; }
+
+      /* هدر کارت ویزیت */
+      .vcard-header { padding: 28px 20px 72px; }
+      .vcard-avatar, .vcard-avatar-ph { width: 110px; height: 110px; }
+      .vcard-name { font-size: 20px; }
+      .vcard-body { padding: 12px 18px 22px; }
+
+      /* شبکه‌های اجتماعی — کوچک‌تر */
+      .social-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+      .social-btn { padding: 12px 8px; font-size: 11px; }
+      .social-btn i { font-size: 20px; }
+
+      /* اسناد */
+      .doc-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+
+      /* QR: در موبایل inline، در دسکتاپ sidebar */
+      .sidebar-qr { display: none; }
+      .inline-qr  { display: block; }
+
+      /* تاییدیه‌ها */
+      .endorsement-badge { display: none; }
+    }
+
+    @media (min-width: 769px) {
+      .inline-qr { display: none; }
+    }
+
+    /* موبایل خیلی کوچک */
+    @media (max-width: 380px) {
+      .social-grid { grid-template-columns: repeat(3, 1fr); }
+      .doc-grid { grid-template-columns: repeat(2, 1fr); }
+      .vcard-meta { gap: 8px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="{% url 'home' %}">
+      <div class="nav-logo-icon"><i class="ti ti-search"></i></div>
+      جستجو
+    </a>
+    <div class="nav-links">
+      <a href="{% url 'home' %}">صفحه اول</a>
+      <a href="{% url 'business_list' %}">همه کسب‌وکارها</a>
+      <a href="{% url 'about' %}">درباره ما</a>
+      <a href="{% url 'contact' %}">تماس</a>
+      <a class="btn btn-gold" style="padding:9px 18px" href="#">ثبت کسب‌وکار</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="{% url 'home' %}"><i class="ti ti-home" style="font-size:13px"></i> خانه</a>
+    <i class="ti ti-chevron-left" style="font-size:12px"></i>
+    <a href="{% url 'business_list' %}">کسب‌وکارها</a>
+    <i class="ti ti-chevron-left" style="font-size:12px"></i>
+    <span>{{ business.name }}</span>
+  </div>
+
+  <div class="layout">
+
+    <!-- ─── MAIN ─── -->
+    <div>
+
+      <!-- VCARD -->
+      <div class="vcard">
+        <div class="vcard-header">
+          <div class="vcard-header-circles">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div class="vcard-avatar-wrap">
+            {% if business.logo %}
+              <img class="vcard-avatar" src="{{ business.logo.url }}" alt="لوگو {{ business.name }}">
+            {% else %}
+              <div class="vcard-avatar-ph">
+                {% if business.category == 'company' %}<i class="ti ti-briefcase"></i>
+                {% elif business.category == 'person'  %}<i class="ti ti-user"></i>
+                {% elif business.category == 'service' %}<i class="ti ti-tools"></i>
+                {% else %}<i class="ti ti-building-store"></i>{% endif %}
+              </div>
+            {% endif %}
+            {% if business.is_verified %}
+              <div class="vcard-verified"><i class="ti ti-check"></i></div>
+            {% endif %}
+          </div>
+
+          <div class="vcard-name">{{ business.name }}</div>
+          <div class="vcard-meta">
+            <span><i class="ti ti-briefcase"></i> {{ business.activity }}</span>
+            <span><i class="ti ti-map-pin"></i> {{ business.get_city_display_name }}</span>
+          </div>
+          {% if theme and theme.tagline %}
+            <div class="vcard-tagline">{{ theme.tagline }}</div>
+          {% endif %}
+        </div>
+
+        <div class="vcard-body">
+          <div class="vcard-badges">
+            <span class="badge badge-gold"><i class="ti ti-crown"></i> Premium</span>
+            {% if business.is_verified %}
+              <span class="badge badge-green"><i class="ti ti-circle-check"></i> تایید شده</span>
+            {% endif %}
+            <span class="badge badge-muted">{{ business.get_category_display }}</span>
+            {% if business.phone %}
+              <span class="badge badge-muted"><i class="ti ti-phone"></i> {{ business.phone }}</span>
+            {% endif %}
+          </div>
+
+          {% if business.about_text or business.short_description %}
+          <div class="vcard-desc">{{ business.about_text|default:business.short_description }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ENDORSEMENTS -->
+      {% if endorsements %}
+      <div class="section-card">
+        <h2><i class="ti ti-award"></i> تاییدیه‌ها و مجوزها</h2>
+        {% for e in endorsements %}
+        <div class="endorsement-card">
+          <div class="endorsement-header">
+            {% if e.issuer_photo %}
+              <img class="endorsement-photo" src="{{ e.issuer_photo.url }}" alt="{{ e.issuer_name }}">
+            {% else %}
+              <div class="endorsement-photo-ph"><i class="ti ti-user-check"></i></div>
+            {% endif %}
+            <div>
+              <div class="endorsement-issuer-name">{{ e.issuer_name }}</div>
+              {% if e.issuer_title %}
+                <div class="endorsement-issuer-title">{{ e.issuer_title }}</div>
+              {% endif %}
+            </div>
+            <span class="endorsement-badge">{{ e.get_badge_text }}</span>
+          </div>
+          <div class="endorsement-text">{{ e.endorsement_text }}</div>
+          {% if e.issued_date %}
+            <div class="endorsement-date"><i class="ti ti-calendar" style="font-size:11px"></i> {{ e.issued_date }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- DOCUMENTS -->
+      {% if documents %}
+      <div class="section-card">
+        <h2><i class="ti ti-files"></i> اسناد و فایل‌های قابل دانلود</h2>
+        <div class="doc-grid">
+          {% for doc in documents %}
+          <div class="doc-card">
+            <div class="doc-icon"><i class="ti {{ doc.get_icon }}"></i></div>
+            <div class="doc-title">{{ doc.title }}</div>
+            <div class="doc-type">{{ doc.get_doc_type_display }}</div>
+            {% if doc.description %}<div class="doc-desc">{{ doc.description }}</div>{% endif %}
+            <a href="{{ doc.file.url }}" download class="doc-download">
+              <i class="ti ti-download"></i> دانلود
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- SOCIAL -->
+      {% if social and social.has_any %}
+      <div class="section-card">
+        <h2><i class="ti ti-share"></i> شبکه‌های اجتماعی</h2>
+        <div class="social-grid">
+          {% if social.instagram %}<a href="{{ social.get_instagram_url }}" target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-instagram"></i>اینستاگرام</a>{% endif %}
+          {% if social.telegram  %}<a href="{{ social.get_telegram_url }}"  target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-telegram"></i>تلگرام</a>{% endif %}
+          {% if business.whatsapp %}<a href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-whatsapp"></i>واتساپ</a>{% endif %}
+          {% if social.bale      %}<a href="{{ social.get_bale_url }}"      target="_blank" rel="noopener" class="social-btn"><i class="ti ti-message-2"></i>بله</a>{% endif %}
+          {% if social.eitaa     %}<a href="{{ social.get_eitaa_url }}"     target="_blank" rel="noopener" class="social-btn"><i class="ti ti-message-circle"></i>ایتا</a>{% endif %}
+          {% if social.rubika    %}<a href="{{ social.rubika }}"            target="_blank" rel="noopener" class="social-btn"><i class="ti ti-message-dots"></i>روبیکا</a>{% endif %}
+          {% if social.gap       %}<a href="{{ social.get_gap_url }}"       target="_blank" rel="noopener" class="social-btn"><i class="ti ti-messages"></i>گپ</a>{% endif %}
+          {% if social.soroush   %}<a href="{{ social.get_soroush_url }}"   target="_blank" rel="noopener" class="social-btn"><i class="ti ti-antenna"></i>سروش</a>{% endif %}
+          {% if social.linkedin  %}<a href="{{ social.linkedin }}"          target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-linkedin"></i>لینکدین</a>{% endif %}
+          {% if social.twitter   %}<a href="{{ social.get_twitter_url }}"   target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-x"></i>توییتر</a>{% endif %}
+          {% if social.youtube   %}<a href="{{ social.youtube }}"           target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-youtube"></i>یوتیوب</a>{% endif %}
+          {% if social.aparat    %}<a href="{{ social.get_aparat_url }}"    target="_blank" rel="noopener" class="social-btn"><i class="ti ti-player-play"></i>آپارات</a>{% endif %}
+          {% if social.tiktok    %}<a href="{{ social.get_tiktok_url }}"    target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-tiktok"></i>تیک‌تاک</a>{% endif %}
+          {% if social.facebook  %}<a href="{{ social.get_facebook_url }}"  target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-facebook"></i>فیسبوک</a>{% endif %}
+          {% if social.pinterest %}<a href="{{ social.get_pinterest_url }}" target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-pinterest"></i>پینترست</a>{% endif %}
+          {% if social.snapchat  %}<a href="{{ social.get_snapchat_url }}"  target="_blank" rel="noopener" class="social-btn"><i class="ti ti-brand-snapchat"></i>اسنپ‌چت</a>{% endif %}
+          {% if business.website %}<a href="{{ business.website }}"         target="_blank" rel="noopener" class="social-btn"><i class="ti ti-world"></i>وب‌سایت</a>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- CONTACT -->
+      <div class="section-card">
+        <h2><i class="ti ti-address-book"></i> اطلاعات تماس</h2>
+
+        {% if business.phone %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-phone"></i></div>
+          <div><div class="contact-label">تلفن</div><div class="contact-value"><a href="tel:{{ business.phone }}">{{ business.phone }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if business.whatsapp %}
+        <div class="contact-row">
+          <div class="contact-icon" style="background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.2);color:#25D366"><i class="ti ti-brand-whatsapp"></i></div>
+          <div><div class="contact-label">واتساپ</div><div class="contact-value"><a href="https://wa.me/{{ business.whatsapp }}">{{ business.whatsapp }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if business.email %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-mail"></i></div>
+          <div><div class="contact-label">ایمیل</div><div class="contact-value"><a href="mailto:{{ business.email }}">{{ business.email }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if business.website %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-world"></i></div>
+          <div><div class="contact-label">وب‌سایت</div><div class="contact-value"><a href="{{ business.website }}" target="_blank" rel="noopener">{{ business.website }}</a></div></div>
+        </div>
+        {% endif %}
+        {% if address and address.address_line1 %}
+        <div class="contact-row">
+          <div class="contact-icon"><i class="ti ti-map-pin"></i></div>
+          <div>
+            <div class="contact-label">آدرس</div>
+            <div class="contact-value">
+              {% if address.state %}{{ address.state }}، {% endif %}
+              {{ address.address_line1 }}
+              {% if address.address_line2 %}، {{ address.address_line2 }}{% endif %}
+              {% if address.postal_code %} — کدپستی: {{ address.postal_code }}{% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- QR موبایل inline -->
+      {% if business.qr_code %}
+      <div class="section-card inline-qr" style="text-align:center">
+        <h2 style="justify-content:center"><i class="ti ti-qrcode"></i> QR Code کارت ویزیت</h2>
+        <img src="{{ business.qr_code.url }}" alt="QR Code {{ business.name }}" style="width:160px;height:160px;border-radius:12px;border:1px solid var(--card-border);padding:8px;background:#fff">
+        <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6">با اسکن این کد می‌توانید مستقیم وارد صفحه این کسب‌وکار شوید</p>
+        <a href="{{ business.qr_code.url }}" download="qr-{{ business.slug }}.png" class="qr-download">
+          <i class="ti ti-download"></i> دانلود QR Code
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+    <!-- /main -->
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside>
+
+      <div class="sidebar-card">
+        <h3>ارتباط با {{ business.name }}</h3>
+        <div class="cta-btns">
+          {% if business.phone %}
+            <a class="btn btn-gold btn-full" href="tel:{{ business.phone }}">
+              <i class="ti ti-phone"></i> تماس مستقیم
+            </a>
+          {% endif %}
+          {% if business.whatsapp %}
+            <a class="btn btn-whatsapp btn-full" href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener">
+              <i class="ti ti-brand-whatsapp"></i> پیام در واتساپ
+            </a>
+          {% endif %}
+          {% if social and social.telegram %}
+            <a class="btn btn-telegram btn-full" href="{{ social.get_telegram_url }}" target="_blank" rel="noopener">
+              <i class="ti ti-brand-telegram"></i> پیام در تلگرام
+            </a>
+          {% endif %}
+          {% if social and social.bale %}
+            <a class="btn btn-outline-gold btn-full" href="{{ social.get_bale_url }}" target="_blank" rel="noopener">
+              <i class="ti ti-message-2"></i> پیام در بله
+            </a>
+          {% endif %}
+          {% if business.email %}
+            <a class="btn btn-outline-gold btn-full" href="mailto:{{ business.email }}">
+              <i class="ti ti-mail"></i> ارسال ایمیل
+            </a>
+          {% endif %}
+        </div>
+
+        {% if address and address.google_map_url %}
+          <a class="map-link" href="{{ address.google_map_url }}" target="_blank" rel="noopener">
+            <i class="ti ti-map"></i> مشاهده روی نقشه
+          </a>
+        {% endif %}
+
+        <div class="sidebar-meta">
+          <div class="sidebar-meta-row">
+            <span>دسته‌بندی</span><span>{{ business.get_category_display }}</span>
+          </div>
+          <div class="sidebar-meta-row">
+            <span>شهر</span><span>{{ business.get_city_display_name }}</span>
+          </div>
+          <div class="sidebar-meta-row">
+            <span>حوزه فعالیت</span><span>{{ business.activity }}</span>
+          </div>
+          {% if business.is_verified %}
+          <div class="sidebar-meta-row">
+            <span>وضعیت</span><span style="color:var(--gold)">★ تایید شده</span>
+          </div>
+          {% endif %}
+          {% if theme %}
+          <div class="sidebar-meta-row">
+            <span>تم</span><span style="color:var(--gold)">{{ theme.get_theme_display }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- QR دسکتاپ -->
+      {% if business.qr_code %}
+      <div class="qr-card sidebar-qr">
+        <h3>QR Code کارت ویزیت</h3>
+        <img src="{{ business.qr_code.url }}" alt="QR Code {{ business.name }}">
+        <p>با اسکن این کد می‌توانید مستقیماً وارد صفحه این کسب‌وکار شوید</p>
+        <a href="{{ business.qr_code.url }}" download="qr-{{ business.slug }}.png" class="qr-download">
+          <i class="ti ti-download"></i> دانلود QR Code
+        </a>
+      </div>
+      {% endif %}
+
+      <!-- ویرایش -->
+      <div class="sidebar-card" style="text-align:center;background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.2)">
+        <div style="font-size:13px;color:var(--gold);margin-bottom:12px;font-weight:600">
+          آیا این کسب‌وکار شماست؟
+        </div>
+        <a class="btn btn-outline-gold btn-full" href="#">
+          <i class="ti ti-edit"></i> ویرایش اطلاعات
+        </a>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM BAR -->
+<div class="mobile-cta">
+  {% if business.phone %}
+    <a class="btn btn-gold" href="tel:{{ business.phone }}"><i class="ti ti-phone"></i> تماس</a>
+  {% endif %}
+  {% if business.whatsapp %}
+    <a class="btn btn-whatsapp" href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> واتساپ</a>
+  {% endif %}
+  {% if social and social.telegram %}
+    <a class="btn btn-telegram" href="{{ social.get_telegram_url }}" target="_blank" rel="noopener"><i class="ti ti-brand-telegram"></i> تلگرام</a>
+  {% endif %}
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <div class="footer-logo-icon"><i class="ti ti-search"></i></div>
+          جستجو
+        </div>
+        <p>پلتفرم هوشمند معرفی کسب‌وکار در ایران. از مغازه‌های محلی تا شرکت‌های بزرگ را به مشتریان واقعی وصل می‌کنیم.</p>
+      </div>
+      <div>
+        <h4>لینک‌های مفید</h4>
+        <a href="{% url 'about' %}">درباره ما</a>
+        <a href="{% url 'contact' %}">تماس با ما</a>
+        <a href="{% url 'terms' %}">قوانین و مقررات</a>
+        <a href="{% url 'business_list' %}">لیست کسب‌وکارها</a>
+      </div>
+      <div>
+        <h4>دسته‌بندی‌ها</h4>
+        <a href="{% url 'business_list' %}?activity=رستوران">رستوران و کافه</a>
+        <a href="{% url 'business_list' %}?activity=پزشک">پزشکی</a>
+        <a href="{% url 'business_list' %}?activity=آموزشگاه">آموزش</a>
+        <a href="{% url 'business_list' %}?activity=خدمات">خدمات</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {% now "Y" %} جستجو — تمامی حقوق محفوظ است</span>
+      <a referrerpolicy="origin" target="_blank" href="https://trustseal.enamad.ir/?id=738875&Code=YLkhpOQz6I9TnI7OMlJYNrtJMktJGvL2">
+        <img referrerpolicy="origin" src="https://api.manmarket.ir/static/img/E.namad.png" alt="اینماد" style="height:50px;opacity:.6;vertical-align:middle">
+      </a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
