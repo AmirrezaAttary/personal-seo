@@ -1,6 +1,7 @@
+# pages/views.py
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView
-from django.db.models import Q, Count
+from django.db.models import Q
 from .models import Business, City
 
 
@@ -83,16 +84,20 @@ class BusinessDetailView(DetailView):
     slug_url_kwarg      = "slug"
 
     def get_queryset(self):
-        return Business.objects.filter(is_active=True).select_related("city", "seo", "address")
+        return (
+            Business.objects
+            .filter(is_active=True)
+            .select_related("city", "seo", "address", "social")
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx["seo"]     = getattr(self.object, "seo", None)
+        ctx["seo"]     = getattr(self.object, "seo",     None)
         ctx["address"] = getattr(self.object, "address", None)
+        ctx["social"]  = getattr(self.object, "social",  None)
         return ctx
-    
-    
-    
+
+
 class AboutView(TemplateView):
     template_name = "businesses/about.html"
 

@@ -17,11 +17,7 @@
   <meta property="og:description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|default:business.about_text|truncatechars:160 }}{% endif %}">
   <meta property="og:url"         content="{{ request.build_absolute_uri }}">
   {% if seo and seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
-  <meta name="twitter:card"        content="summary">
-  <meta name="twitter:title"       content="{% if seo and seo.title %}{{ seo.title }}{% else %}{{ business.name }}{% endif %}">
-  <meta name="twitter:description" content="{% if seo and seo.description %}{{ seo.description }}{% else %}{{ business.short_description|truncatechars:160 }}{% endif %}">
 
-  <!-- JSON-LD LocalBusiness -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -43,150 +39,356 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --brand:      #0B6FBF;
-      --brand-dark: #0957a0;
-      --brand-light:#e1f0ff;
-      --bg:         #f4f6f9;
-      --card:       #fff;
-      --text:       #111;
-      --muted:      #666;
-      --border:     #e8ecf0;
-      --radius:     12px;
-      --radius-lg:  16px;
+      --brand:       #0B6FBF;
+      --brand-dark:  #0957a0;
+      --brand-light: #e1f0ff;
+      --bg:          #eef2f7;
+      --card:        #fff;
+      --text:        #111;
+      --muted:       #6b7a8d;
+      --border:      #e4e9f0;
+      --radius:      14px;
+      --radius-lg:   20px;
+      --radius-xl:   28px;
     }
 
-    body { font-family: 'Vazirmatn', system-ui, Arial; background: var(--bg); color: var(--text); line-height: 1.6; }
+    body {
+      font-family: 'Vazirmatn', system-ui, Arial;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
     a { color: inherit; text-decoration: none; }
 
-    /* NAV */
-    .nav { background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: var(--brand); }
-    .nav-logo-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
-    .nav-links { display: flex; align-items: center; gap: 20px; }
+    /* ─── NAV ─── */
+    .nav {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 20px;
+      height: 58px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 800; color: var(--brand); }
+    .nav-logo-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: var(--brand); display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 15px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 18px; }
     .nav-links a { font-size: 14px; color: var(--muted); transition: color .15s; }
     .nav-links a:hover { color: var(--brand); }
 
-    /* BTN */
-    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 11px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: background .15s; }
-    .btn-primary  { background: var(--brand); color: #fff; }
-    .btn-primary:hover  { background: var(--brand-dark); }
-    .btn-outline  { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
-    .btn-outline:hover  { background: var(--brand-light); }
-    .btn-whatsapp { background: #25D366; color: #fff; }
-    .btn-whatsapp:hover { background: #1ebe5d; }
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 22px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      border: none; font-family: inherit; transition: all .18s;
+      text-align: center; justify-content: center;
+    }
+    .btn-primary   { background: var(--brand); color: #fff; }
+    .btn-primary:hover   { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(11,111,191,.3); }
+    .btn-outline   { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+    .btn-outline:hover   { background: var(--brand-light); }
+    .btn-whatsapp  { background: #25D366; color: #fff; }
+    .btn-whatsapp:hover  { background: #1ebe5d; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,211,102,.3); }
+    .btn-telegram  { background: #2AABEE; color: #fff; }
+    .btn-telegram:hover  { background: #1a9bd8; }
+    .btn-full { width: 100%; }
 
-    /* LAYOUT */
-    .container { max-width: 1080px; margin: 0 auto; padding: 32px 24px; }
-    .layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+    /* ─── LAYOUT ─── */
+    .container { max-width: 1080px; margin: 0 auto; padding: 28px 20px 48px; }
 
-    /* BREADCRUMB */
-    .breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .breadcrumb {
+      font-size: 13px; color: var(--muted); margin-bottom: 22px;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
     .breadcrumb a { color: var(--brand); }
 
-    /* PROFILE CARD */
-    .profile-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 28px;
-      margin-bottom: 20px;
+    .layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+
+    /* ─── BUSINESS CARD (کارت ویزیت اصلی) ─── */
+    .vcard {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.06);
     }
-    .profile-top { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 20px; }
-    .profile-logo {
-      width: 80px; height: 80px; border-radius: 16px;
-      object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;
+
+    /* هدر رنگی کارت */
+    .vcard-header {
+      background: linear-gradient(135deg, #0B6FBF 0%, #1a8fe0 60%, #0e4f8a 100%);
+      padding: 32px 24px 70px;
+      position: relative;
+      text-align: center;
     }
-    .profile-logo-placeholder {
-      width: 80px; height: 80px; border-radius: 16px;
-      background: var(--brand-light); color: var(--brand);
+    .vcard-header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 48px;
+      background: var(--card);
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+
+    /* دایره تزئینی پس‌زمینه */
+    .vcard-header-circles {
+      position: absolute; inset: 0; overflow: hidden; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .vcard-header-circles span {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,.07);
+    }
+    .vcard-header-circles span:nth-child(1) { width: 160px; height: 160px; top: -60px; left: -40px; }
+    .vcard-header-circles span:nth-child(2) { width: 100px; height: 100px; top: 10px; right: -20px; }
+    .vcard-header-circles span:nth-child(3) { width: 60px;  height: 60px;  bottom: 30px; left: 40px; }
+
+    /* آواتار */
+    .vcard-avatar-wrap {
+      position: relative; display: inline-block;
+      margin-bottom: 14px; z-index: 1;
+    }
+    .vcard-avatar, .vcard-avatar-ph {
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 4px solid rgba(255,255,255,.9);
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    }
+    .vcard-avatar { object-fit: cover; }
+    .vcard-avatar-ph {
+      background: rgba(255,255,255,.2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 34px; flex-shrink: 0;
+      font-size: 42px; color: #fff;
     }
-    .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-    .profile-sub  { font-size: 14px; color: var(--muted); line-height: 1.8; }
-    .profile-sub span { display: inline-flex; align-items: center; gap: 4px; margin-left: 12px; }
+    .vcard-verified {
+      position: absolute; bottom: 4px; left: 0;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #22c55e; border: 3px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 12px;
+    }
 
-    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-    .badge { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+    .vcard-name {
+      font-size: 22px; font-weight: 800; color: #fff;
+      margin-bottom: 6px; line-height: 1.3; position: relative; z-index: 1;
+    }
+    .vcard-meta {
+      font-size: 13px; color: rgba(255,255,255,.75);
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      flex-wrap: wrap; position: relative; z-index: 1;
+    }
+    .vcard-meta span { display: inline-flex; align-items: center; gap: 4px; }
+
+    /* بدنه کارت */
+    .vcard-body { padding: 16px 24px 24px; }
+
+    .vcard-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; justify-content: center; }
+    .badge {
+      font-size: 12px; padding: 5px 13px; border-radius: 20px;
+      font-weight: 600; display: inline-flex; align-items: center; gap: 4px;
+    }
     .badge-blue  { background: var(--brand-light); color: var(--brand); }
-    .badge-green { background: #eaf3de; color: #3B6D11; }
-    .badge-gray  { background: #f1f1f1; color: #555; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-gray  { background: #f1f5f9; color: #475569; }
 
-    .profile-desc { font-size: 15px; color: #444; line-height: 1.9; white-space: pre-line; }
+    .vcard-desc {
+      font-size: 14px; color: #444; line-height: 1.9;
+      white-space: pre-line;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
 
-    /* SECTION CARD */
+    /* ─── SOCIAL LINKS ─── */
     .section-card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 24px;
-      margin-bottom: 20px;
+      border-radius: var(--radius-lg); padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 8px rgba(0,0,0,.04);
     }
-    .section-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .section-card h2 {
+      font-size: 15px; font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
     .section-card h2 i { color: var(--brand); font-size: 18px; }
 
-    /* WHY LIST */
-    .why-list { list-style: none; padding: 0; }
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .social-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 14px 10px; border-radius: var(--radius); font-size: 12px;
+      font-weight: 600; transition: all .18s; border: 1.5px solid transparent;
+      cursor: pointer;
+    }
+    .social-btn i { font-size: 22px; }
+    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+
+    .social-instagram { background: #fef2f2; color: #c2185b; border-color: #fce4ec; }
+    .social-telegram  { background: #e3f2fd; color: #1565c0; border-color: #bbdefb; }
+    .social-whatsapp  { background: #e8f5e9; color: #2e7d32; border-color: #c8e6c9; }
+    .social-linkedin  { background: #e3f2fd; color: #0d47a1; border-color: #bbdefb; }
+    .social-twitter   { background: #fafafa; color: #212121; border-color: #e0e0e0; }
+    .social-youtube   { background: #fff3e0; color: #bf360c; border-color: #ffccbc; }
+    .social-aparat    { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
+    .social-rubika    { background: #f3e5f5; color: #6a1b9a; border-color: #e1bee7; }
+    .social-website   { background: var(--brand-light); color: var(--brand); border-color: #bdd9f5; }
+
+    /* ─── CONTACT ROWS ─── */
+    .contact-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+    }
+    .contact-row:last-child { border-bottom: none; }
+    .contact-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--brand-light); color: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+    .contact-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+    .contact-value { font-size: 14px; font-weight: 600; }
+    .contact-value a { color: var(--brand); }
+
+    /* ─── WHY LIST ─── */
+    .why-list { list-style: none; }
     .why-list li {
       display: flex; align-items: flex-start; gap: 10px;
-      padding: 8px 0; border-bottom: 1px solid var(--border);
+      padding: 9px 0; border-bottom: 1px solid var(--border);
       font-size: 14px; color: #444;
     }
     .why-list li:last-child { border-bottom: none; }
     .why-list li i { color: var(--brand); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
 
-    /* CONTACT ROW */
-    .contact-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 0; border-bottom: 1px solid var(--border);
-      font-size: 14px;
-    }
-    .contact-row:last-child { border-bottom: none; }
-    .contact-icon { width: 36px; height: 36px; border-radius: 9px; background: var(--brand-light); color: var(--brand); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
-    .contact-label { font-size: 12px; color: var(--muted); }
-    .contact-value { font-size: 14px; font-weight: 500; }
-    .contact-value a { color: var(--brand); }
-
-    /* SIDEBAR */
+    /* ─── SIDEBAR ─── */
     .sidebar-card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 22px;
-      margin-bottom: 16px; position: sticky; top: 76px;
+      border-radius: var(--radius-lg); padding: 20px;
+      margin-bottom: 16px; position: sticky; top: 74px;
+      box-shadow: 0 1px 8px rgba(0,0,0,.04);
     }
-    .sidebar-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+    .sidebar-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--muted); }
     .cta-btns { display: flex; flex-direction: column; gap: 10px; }
-    .cta-btns .btn { justify-content: center; }
 
     .map-link {
       display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--brand); margin-top: 14px;
-      padding: 10px; background: var(--brand-light); border-radius: var(--radius);
-      justify-content: center;
+      font-size: 13px; color: var(--brand); margin-top: 12px;
+      padding: 11px; background: var(--brand-light); border-radius: var(--radius);
+      justify-content: center; font-weight: 600; transition: background .15s;
     }
-    .map-link:hover { background: #cde3f7; }
+    .map-link:hover { background: #c8dff5; }
 
     .sidebar-meta { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px; }
-    .sidebar-meta-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; }
+    .sidebar-meta-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; padding: 6px 0;
+    }
     .sidebar-meta-row span:first-child { color: var(--muted); }
-    .sidebar-meta-row span:last-child  { font-weight: 500; }
+    .sidebar-meta-row span:last-child  { font-weight: 600; }
 
-    /* FOOTER */
-    footer { background: #0c2d52; color: #a8c8e8; padding: 28px 24px; margin-top: 40px; }
-    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-    .footer-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
-    .footer-logo-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 13px; }
-    footer p { font-size: 13px; }
+    /* ─── QR CODE ─── */
+    .qr-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 8px rgba(0,0,0,.04);
+    }
+    .qr-card h3 { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 14px; }
+    .qr-card img {
+      width: 160px; height: 160px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 8px;
+      background: #fff;
+    }
+    .qr-card p {
+      font-size: 12px; color: var(--muted);
+      margin-top: 10px; line-height: 1.6;
+    }
+    .qr-download {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 12px; font-size: 12px; color: var(--brand);
+      font-weight: 600; padding: 8px 16px;
+      background: var(--brand-light); border-radius: 8px;
+      transition: background .15s;
+    }
+    .qr-download:hover { background: #c8dff5; }
 
+    /* ─── FOOTER ─── */
+    footer { background: #0c2d52; color: #a8c8e8; padding: 32px 24px; margin-top: 20px; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; margin-bottom: 28px;
+    }
+    .footer-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .footer-logo-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: rgba(255,255,255,.2);
+      display: flex; align-items: center; justify-content: center; font-size: 13px;
+    }
+    .footer-grid > div p { font-size: 13px; line-height: 1.8; }
+    .footer-grid > div h4 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .footer-grid > div a {
+      display: block; font-size: 13px; color: #a8c8e8;
+      margin-bottom: 8px; transition: color .15s;
+    }
+    .footer-grid > div a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; font-size: 13px;
+    }
+
+    /* ─── MOBILE BOTTOM BAR ─── */
+    .mobile-cta {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      z-index: 200;
+      gap: 10px;
+    }
+    .mobile-cta .btn { flex: 1; font-size: 13px; padding: 13px 10px; }
+
+    /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .layout { grid-template-columns: 1fr; }
       .sidebar-card { position: static; }
-      .profile-top { flex-direction: column; align-items: flex-start; }
-      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+      .mobile-cta { display: flex; }
+      .container { padding-bottom: 90px; }
+
+      /* کارت ویزیت موبایل — هدر بزرگ‌تر */
+      .vcard-header { padding: 28px 20px 72px; }
+      .vcard-avatar, .vcard-avatar-ph { width: 110px; height: 110px; }
+      .vcard-name { font-size: 20px; }
+      .vcard-body { padding: 12px 18px 22px; }
+
+      /* QR روی موبایل زیر اطلاعات نشون داده میشه نه sidebar */
+      .sidebar-qr { display: none; }
+      .inline-qr  { display: block; }
+    }
+
+    @media (min-width: 769px) {
+      .inline-qr { display: none; }
     }
   </style>
 </head>
@@ -200,11 +402,11 @@
       جستجو
     </a>
     <div class="nav-links">
-      <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>صفحه اول</a>
-      <a href="{% url 'business_list' %}" {% if request.resolver_match.url_name == 'business_list' %}class="active"{% endif %}>همه کسب‌وکارها</a>
-      <a href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}class="active"{% endif %}>درباره ما</a>
-      <a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>تماس</a>
-      <a class="btn btn-primary" href="#">ثبت کسب‌وکار</a>
+      <a href="{% url 'home' %}">صفحه اول</a>
+      <a href="{% url 'business_list' %}">همه کسب‌وکارها</a>
+      <a href="{% url 'about' %}">درباره ما</a>
+      <a href="{% url 'contact' %}">تماس</a>
+      <a class="btn btn-primary" style="padding:9px 18px" href="#">ثبت کسب‌وکار</a>
     </div>
   </div>
 </nav>
@@ -213,73 +415,134 @@
 
   <!-- BREADCRUMB -->
   <div class="breadcrumb">
-    <a href="{% url 'home' %}">خانه</a>
-    <i class="ti ti-chevron-left" style="font-size:13px"></i>
+    <a href="{% url 'home' %}"><i class="ti ti-home" style="font-size:13px"></i> خانه</a>
+    <i class="ti ti-chevron-left" style="font-size:12px"></i>
     <a href="{% url 'business_list' %}">کسب‌وکارها</a>
-    <i class="ti ti-chevron-left" style="font-size:13px"></i>
+    <i class="ti ti-chevron-left" style="font-size:12px"></i>
     <span>{{ business.name }}</span>
   </div>
 
   <div class="layout">
 
-    <!-- MAIN COLUMN -->
+    <!-- ─── MAIN COLUMN ─── -->
     <div>
 
-      <!-- PROFILE -->
-      <div class="profile-card">
-        <div class="profile-top">
-          {% if business.logo %}
-            <img class="profile-logo" src="{{ business.logo.url }}" alt="لوگو {{ business.name }}">
-          {% else %}
-            <div class="profile-logo-placeholder">
-              {% if business.category == 'company' %}<i class="ti ti-briefcase"></i>
-              {% elif business.category == 'person'  %}<i class="ti ti-user"></i>
-              {% elif business.category == 'service' %}<i class="ti ti-tools"></i>
-              {% else %}<i class="ti ti-building-store"></i>{% endif %}
-            </div>
-          {% endif %}
-          <div>
-            <div class="profile-name">{{ business.name }}</div>
-            <div class="profile-sub">
-              <span><i class="ti ti-tag" style="font-size:13px"></i> {{ business.activity }}</span>
-              <span><i class="ti ti-map-pin" style="font-size:13px"></i> {{ business.get_city_display_name }}</span>
-            </div>
+      <!-- VCARD — کارت ویزیت اصلی -->
+      <div class="vcard">
+
+        <!-- هدر آبی -->
+        <div class="vcard-header">
+          <div class="vcard-header-circles">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div class="vcard-avatar-wrap">
+            {% if business.logo %}
+              <img class="vcard-avatar" src="{{ business.logo.url }}" alt="لوگو {{ business.name }}">
+            {% else %}
+              <div class="vcard-avatar-ph">
+                {% if business.category == 'company' %}<i class="ti ti-briefcase"></i>
+                {% elif business.category == 'person'  %}<i class="ti ti-user"></i>
+                {% elif business.category == 'service' %}<i class="ti ti-tools"></i>
+                {% else %}<i class="ti ti-building-store"></i>{% endif %}
+              </div>
+            {% endif %}
+            {% if business.is_verified %}
+              <div class="vcard-verified"><i class="ti ti-check"></i></div>
+            {% endif %}
+          </div>
+
+          <div class="vcard-name">{{ business.name }}</div>
+          <div class="vcard-meta">
+            <span><i class="ti ti-briefcase"></i> {{ business.activity }}</span>
+            <span><i class="ti ti-map-pin"></i> {{ business.get_city_display_name }}</span>
           </div>
         </div>
 
-        <div class="badges">
-          {% if business.is_verified %}
-            <span class="badge badge-green"><i class="ti ti-circle-check"></i> تایید شده</span>
-          {% endif %}
-          <span class="badge badge-blue">{{ business.get_category_display }}</span>
-          {% if business.phone %}
-            <span class="badge badge-gray"><i class="ti ti-phone"></i> {{ business.phone }}</span>
-          {% endif %}
-        </div>
+        <!-- بدنه کارت -->
+        <div class="vcard-body">
+          <div class="vcard-badges">
+            {% if business.is_verified %}
+              <span class="badge badge-green"><i class="ti ti-circle-check"></i> تایید شده</span>
+            {% endif %}
+            <span class="badge badge-blue">{{ business.get_category_display }}</span>
+            {% if business.phone %}
+              <span class="badge badge-gray"><i class="ti ti-phone"></i> {{ business.phone }}</span>
+            {% endif %}
+          </div>
 
-        <div class="profile-desc">
-          {% if business.about_text %}
-            {{ business.about_text }}
-          {% elif business.short_description %}
-            {{ business.short_description }}
-          {% else %}
-            <span style="color:var(--muted)">اطلاعات در حال تکمیل است.</span>
+          {% if business.about_text or business.short_description %}
+          <div class="vcard-desc">
+            {{ business.about_text|default:business.short_description }}
+          </div>
           {% endif %}
         </div>
       </div>
 
-      <!-- WHY -->
+      <!-- SOCIAL LINKS -->
+      {% if social and social.has_any %}
       <div class="section-card">
-        <h2><i class="ti ti-star"></i> چرا این مجموعه؟</h2>
-        <ul class="why-list">
-          <li><i class="ti ti-check"></i> کیفیت و دقت در ارائه خدمات</li>
-          <li><i class="ti ti-check"></i> پاسخگویی سریع پیش از سفارش</li>
-          <li><i class="ti ti-check"></i> فعالیت در {{ business.get_city_display_name }} و مناطق اطراف</li>
-          <li><i class="ti ti-check"></i> امکان هماهنگی از طریق تماس و واتساپ</li>
-        </ul>
+        <h2><i class="ti ti-share"></i> شبکه‌های اجتماعی</h2>
+        <div class="social-grid">
+          {% if social.instagram %}
+            <a href="{{ social.get_instagram_url }}" target="_blank" rel="noopener" class="social-btn social-instagram">
+              <i class="ti ti-brand-instagram"></i>
+              اینستاگرام
+            </a>
+          {% endif %}
+          {% if social.telegram %}
+            <a href="{{ social.get_telegram_url }}" target="_blank" rel="noopener" class="social-btn social-telegram">
+              <i class="ti ti-brand-telegram"></i>
+              تلگرام
+            </a>
+          {% endif %}
+          {% if business.whatsapp %}
+            <a href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener" class="social-btn social-whatsapp">
+              <i class="ti ti-brand-whatsapp"></i>
+              واتساپ
+            </a>
+          {% endif %}
+          {% if social.linkedin %}
+            <a href="{{ social.linkedin }}" target="_blank" rel="noopener" class="social-btn social-linkedin">
+              <i class="ti ti-brand-linkedin"></i>
+              لینکدین
+            </a>
+          {% endif %}
+          {% if social.twitter %}
+            <a href="{{ social.get_twitter_url }}" target="_blank" rel="noopener" class="social-btn social-twitter">
+              <i class="ti ti-brand-x"></i>
+              توییتر
+            </a>
+          {% endif %}
+          {% if social.youtube %}
+            <a href="{{ social.youtube }}" target="_blank" rel="noopener" class="social-btn social-youtube">
+              <i class="ti ti-brand-youtube"></i>
+              یوتیوب
+            </a>
+          {% endif %}
+          {% if social.aparat %}
+            <a href="{{ social.get_aparat_url }}" target="_blank" rel="noopener" class="social-btn social-aparat">
+              <i class="ti ti-player-play"></i>
+              آپارات
+            </a>
+          {% endif %}
+          {% if social.rubika %}
+            <a href="{{ social.rubika }}" target="_blank" rel="noopener" class="social-btn social-rubika">
+              <i class="ti ti-message-circle"></i>
+              روبیکا
+            </a>
+          {% endif %}
+          {% if business.website %}
+            <a href="{{ business.website }}" target="_blank" rel="noopener" class="social-btn social-website">
+              <i class="ti ti-world"></i>
+              وب‌سایت
+            </a>
+          {% endif %}
+        </div>
       </div>
+      {% endif %}
 
-      <!-- CONTACT -->
+      <!-- CONTACT INFO -->
       <div class="section-card">
         <h2><i class="ti ti-address-book"></i> اطلاعات تماس</h2>
 
@@ -337,28 +600,60 @@
           </div>
         </div>
         {% endif %}
-
       </div>
 
-    </div><!-- /main col -->
+      <!-- WHY -->
+      <div class="section-card">
+        <h2><i class="ti ti-star"></i> چرا این مجموعه؟</h2>
+        <ul class="why-list">
+          <li><i class="ti ti-check"></i> کیفیت و دقت در ارائه خدمات</li>
+          <li><i class="ti ti-check"></i> پاسخگویی سریع پیش از سفارش</li>
+          <li><i class="ti ti-check"></i> فعالیت در {{ business.get_city_display_name }} و مناطق اطراف</li>
+          <li><i class="ti ti-check"></i> امکان هماهنگی از طریق تماس و پیام‌رسان‌ها</li>
+        </ul>
+      </div>
 
-    <!-- SIDEBAR -->
+      <!-- QR CODE — فقط موبایل (inline) -->
+      {% if business.qr_code %}
+      <div class="section-card inline-qr" style="text-align:center;">
+        <h2 style="justify-content:center;"><i class="ti ti-qrcode"></i> QR Code کارت ویزیت</h2>
+        <img src="{{ business.qr_code.url }}" alt="QR Code {{ business.name }}" style="width:160px;height:160px;border-radius:12px;border:1px solid var(--border);padding:8px;background:#fff;">
+        <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;">
+          با اسکن این کد می‌توانید مستقیم وارد صفحه این کسب‌وکار شوید
+        </p>
+        <a href="{{ business.qr_code.url }}" download="qr-{{ business.slug }}.png" class="qr-download">
+          <i class="ti ti-download"></i> دانلود QR Code
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+    <!-- /main col -->
+
+    <!-- ─── SIDEBAR ─── -->
     <aside>
+
+      <!-- CTA -->
       <div class="sidebar-card">
         <h3>ارتباط با {{ business.name }}</h3>
         <div class="cta-btns">
           {% if business.phone %}
-            <a class="btn btn-primary" href="tel:{{ business.phone }}">
+            <a class="btn btn-primary btn-full" href="tel:{{ business.phone }}">
               <i class="ti ti-phone"></i> تماس مستقیم
             </a>
           {% endif %}
           {% if business.whatsapp %}
-            <a class="btn btn-whatsapp" href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener">
+            <a class="btn btn-whatsapp btn-full" href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener">
               <i class="ti ti-brand-whatsapp"></i> پیام در واتساپ
             </a>
           {% endif %}
+          {% if social and social.telegram %}
+            <a class="btn btn-telegram btn-full" href="{{ social.get_telegram_url }}" target="_blank" rel="noopener">
+              <i class="ti ti-brand-telegram"></i> پیام در تلگرام
+            </a>
+          {% endif %}
           {% if business.email %}
-            <a class="btn btn-outline" href="mailto:{{ business.email }}">
+            <a class="btn btn-outline btn-full" href="mailto:{{ business.email }}">
               <i class="ti ti-mail"></i> ارسال ایمیل
             </a>
           {% endif %}
@@ -386,25 +681,59 @@
           {% if business.is_verified %}
           <div class="sidebar-meta-row">
             <span>وضعیت</span>
-            <span style="color:#3B6D11">✓ تایید شده</span>
+            <span style="color:#166534">✓ تایید شده</span>
           </div>
           {% endif %}
         </div>
       </div>
 
+      <!-- QR CODE — دسکتاپ -->
+      {% if business.qr_code %}
+      <div class="qr-card sidebar-qr">
+        <h3>QR Code کارت ویزیت</h3>
+        <img src="{{ business.qr_code.url }}" alt="QR Code {{ business.name }}">
+        <p>با اسکن این کد می‌توانید مستقیماً وارد صفحه این کسب‌وکار شوید</p>
+        <a href="{{ business.qr_code.url }}" download="qr-{{ business.slug }}.png" class="qr-download">
+          <i class="ti ti-download"></i> دانلود QR Code
+        </a>
+      </div>
+      {% endif %}
+
+      <!-- ویرایش -->
       <div class="sidebar-card" style="text-align:center; background: var(--brand-light); border-color: #b0d8f7;">
-        <div style="font-size:13px; color:var(--brand); margin-bottom:12px; font-weight:500;">آیا این کسب‌وکار شماست؟</div>
-        <a class="btn btn-outline" href="#" style="width:100%; justify-content:center;">
+        <div style="font-size:13px; color:var(--brand); margin-bottom:12px; font-weight:600;">
+          آیا این کسب‌وکار شماست؟
+        </div>
+        <a class="btn btn-outline btn-full" href="#">
           <i class="ti ti-edit"></i> ویرایش اطلاعات
         </a>
       </div>
-    </aside>
 
-  </div><!-- /layout -->
-</div><!-- /container -->
+    </aside>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM CTA BAR -->
+<div class="mobile-cta">
+  {% if business.phone %}
+    <a class="btn btn-primary" href="tel:{{ business.phone }}">
+      <i class="ti ti-phone"></i> تماس
+    </a>
+  {% endif %}
+  {% if business.whatsapp %}
+    <a class="btn btn-whatsapp" href="https://wa.me/{{ business.whatsapp }}" target="_blank" rel="noopener">
+      <i class="ti ti-brand-whatsapp"></i> واتساپ
+    </a>
+  {% endif %}
+  {% if social and social.telegram %}
+    <a class="btn btn-telegram" href="{{ social.get_telegram_url }}" target="_blank" rel="noopener">
+      <i class="ti ti-brand-telegram"></i> تلگرام
+    </a>
+  {% endif %}
+</div>
 
 <!-- FOOTER -->
-<footer class="site-footer">
+<footer>
   <div class="footer-inner">
     <div class="footer-grid">
       <div>
@@ -435,7 +764,7 @@
          href="https://trustseal.enamad.ir/?id=738875&Code=YLkhpOQz6I9TnI7OMlJYNrtJMktJGvL2">
         <img referrerpolicy="origin"
              src="https://api.manmarket.ir/static/img/E.namad.png"
-             alt="اینماد" style="height:54px; opacity:.75; vertical-align:middle">
+             alt="اینماد" style="height:50px; opacity:.7; vertical-align:middle">
       </a>
     </div>
   </div>
