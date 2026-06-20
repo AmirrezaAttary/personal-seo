@@ -352,6 +352,16 @@
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; font-size: 13px;
     }
+    /* FOOTER */
+    .site-footer { background: #0c2d52; color: #a8c8e8; padding: 40px 24px 24px; margin-top: auto; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+    .footer-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .footer-logo-icon { width: 30px; height: 30px; border-radius: 7px; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .site-footer p, .site-footer a { font-size: 13px; line-height: 2; color: #a8c8e8; display: block; }
+    .site-footer h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .site-footer a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 16px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 12px; color: #7aabb5; text-align: center; }
 
     /* ─── MOBILE BOTTOM BAR ─── */
     .mobile-cta {
@@ -733,7 +743,7 @@
 </div>
 
 <!-- FOOTER -->
-<footer>
+<footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-grid">
       <div>
@@ -764,7 +774,7 @@
          href="https://trustseal.enamad.ir/?id=738875&Code=YLkhpOQz6I9TnI7OMlJYNrtJMktJGvL2">
         <img referrerpolicy="origin"
              src="https://api.manmarket.ir/static/img/E.namad.png"
-             alt="اینماد" style="height:50px; opacity:.7; vertical-align:middle">
+             alt="اینماد" style="height:54px; opacity:.75; vertical-align:middle">
       </a>
     </div>
   </div>
